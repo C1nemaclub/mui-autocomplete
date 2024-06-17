@@ -26,15 +26,25 @@ export const validationSchema = yup.object().shape({
   conditions: yup
     .array()
     .of(
-      yup.string().test('valid', 'Test is an invalid word', (value) => {
-        if (value === 'Test') return false;
-        return true;
+      // yup.string().test('valid', 'Test is an invalid word', (value) => {
+      //   if (value === 'Test') return false;
+      //   return true;
+      // })
+      // yup.string().min(1).trim()
+      yup.string().test('test', 'req', (value) => {
+        if (value && value.trim() !== '') {
+          return true;
+        }
+        return false;
       })
     )
-    .min(2)
+    .min(1)
     .required('This field is required'),
-  name: yup.string().required('This field is required'),
-  description: yup.string().required('This field is required'),
+  name: yup
+    .string()
+    .required('This field is required')
+    .matches(/^[a-zA-Z0-9]*$/, 'Only letters and numbers are allowed'),
+  description: yup.string().min(1).trim().required('This field is required'),
 });
 
 export const data: Project[] = [
@@ -255,3 +265,25 @@ export const data: Project[] = [
     ],
   },
 ];
+
+export type KeyType = keyof yup.InferType<typeof validationSchema>;
+
+export type DisabledMapper = {
+  [key in KeyType]: boolean;
+};
+
+export const disabledMapper = {
+  projectType: false,
+  section: false,
+  field: false,
+  conditions: false,
+  name: false,
+  description: false,
+};
+
+export const ifValidAfterTrimThen = (value: string, callback: () => void) => {
+  if (value.trim() !== '') {
+    callback();
+  }
+  return;
+};

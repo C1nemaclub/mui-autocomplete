@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material';
+import { blue } from '@mui/material/colors';
 
 export const theme = createTheme({
   palette: {
@@ -12,11 +13,10 @@ export const theme = createTheme({
   },
   components: {
     MuiTextField: {
-      // disabled
       styleOverrides: {
         root: {
           '& .Mui-disabled + .MuiOutlinedInput-root': {
-            // backgroundColor: grey[900],
+            border: `1px solid ${blue['A100']}`,
           },
         },
       },

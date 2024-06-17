@@ -1,29 +1,26 @@
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Grid,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, CircularProgress, Grid, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
-import { data as response, validationSchema } from './utils/constants';
+import UserForm from './components/UserForm';
+import {
+  DisabledMapper,
+  data as response,
+  validationSchema,
+} from './utils/constants';
 import { FormikEntity, Project } from './utils/data.model';
 
 function App() {
   const [data, setData] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
   const form = useFormik<FormikEntity>({
+    validateOnMount: true,
     initialValues: {
       projectType: null,
       section: null,
       field: null,
       conditions: [],
-      name: '',
+      name: 'Default',
       description: '',
     },
     onSubmit: (payload) => {
@@ -50,6 +47,12 @@ function App() {
         }, 620);
       });
       setData(res);
+      // form.setValues({
+      //   ...form.values,
+      //   projectType: res[0],
+      //   section: res[0].sections[0],
+      //   field: res[0].sections[0].fields[0],
+      // });
     } catch (e) {
       console.error(e);
     } finally {
@@ -61,22 +64,14 @@ function App() {
     getData();
   }, []);
 
-  useEffect(() => {
-    formRef.current.setFieldValue('section', null);
-    formRef.current.setFieldValue('field', null);
-  }, [form.values.projectType]);
-
-  useEffect(() => {
-    formRef.current.setFieldValue('field', null);
-  }, [form.values.section]);
-
-  const sectionOptions = data.find(
-    (item) => item.project_type_id === form.values.projectType?.project_type_id
-  )?.sections;
-
-  const fieldOptions = sectionOptions?.find(
-    (item) => item.section_selector === form.values.section?.section_selector
-  )?.fields;
+  const disabledFields: DisabledMapper = {
+    name: false,
+    description: false,
+    projectType: false,
+    section: false,
+    field: false,
+    conditions: false,
+  };
 
   return (
     <Box
@@ -104,137 +99,7 @@ function App() {
         {loading ? (
           <CircularProgress sx={{ m: 'auto' }} />
         ) : (
-          <>
-            <Grid item xs={6}>
-              <TextField
-                name='name'
-                label='Name'
-                onChange={form.handleChange}
-                value={form.values.name}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                name='description'
-                label='Description'
-                onChange={form.handleChange}
-                value={form.values.description}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Autocomplete
-                fullWidth
-                options={data}
-                value={form.values.projectType}
-                renderInput={(params) => (
-                  <TextField
-                    name='projectType'
-                    label='Project Type'
-                    {...params}
-                  />
-                )}
-                getOptionLabel={(option) => option.project_type_name}
-                onChange={(_, value) => {
-                  form.setFieldValue('projectType', value);
-                }}
-                isOptionEqualToValue={(option, value) =>
-                  option.project_type_id === value.project_type_id
-                }
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <Autocomplete
-                fullWidth
-                options={sectionOptions || []}
-                disabled={!sectionOptions}
-                value={form.values.section}
-                renderInput={(params) => (
-                  <TextField name='section' label='Section' {...params} />
-                )}
-                getOptionLabel={(option) => option.section_name}
-                onChange={(_, value) => {
-                  form.setFieldValue('section', value);
-                }}
-                isOptionEqualToValue={(option, value) =>
-                  option.section_selector === value.section_selector
-                }
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <Autocomplete
-                fullWidth
-                options={fieldOptions || []}
-                disabled={!fieldOptions}
-                value={form.values.field}
-                renderInput={(params) => (
-                  <TextField {...params} name='field' label='Field' />
-                )}
-                getOptionLabel={(option) => option.field_name}
-                onChange={(_, value) => {
-                  form.setFieldValue('field', value);
-                }}
-                isOptionEqualToValue={(option, value) =>
-                  option.field_selector === value.field_selector
-                }
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Autocomplete
-                multiple
-                options={[]}
-                value={form.values.conditions}
-                onChange={(_, value) => {
-                  form.setFieldValue('conditions', value);
-                }}
-                freeSolo
-                renderTags={(value: readonly string[], getTagProps) =>
-                  value.map((option: string, index: number) => {
-                    const { key, ...rest } = getTagProps({ index });
-                    return (
-                      <Chip
-                        variant='filled'
-                        label={option}
-                        key={key}
-                        // color='primary'
-                        {...rest}
-                      />
-                    );
-                  })
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    name='conditions'
-                    variant='outlined'
-                    label='Conditions'
-                    placeholder='Press Enter after typing each value'
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                )}
-                fullWidth
-              />
-            </Grid>
-            <Grid item container columns={12} spacing={2}>
-              <Grid item xs={6} mt={2}>
-                <Button variant='contained' type='submit' fullWidth>
-                  Submit
-                </Button>
-              </Grid>
-              <Grid item xs={6} mt={2}>
-                <Button
-                  variant='contained'
-                  type='reset'
-                  fullWidth
-                  onClick={() => form.resetForm()}>
-                  Reset
-                </Button>
-              </Grid>
-            </Grid>
-          </>
+          <UserForm form={form} data={data} disabledFields={disabledFields} />
         )}
       </Grid>
       <pre>
