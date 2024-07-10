@@ -1,8 +1,9 @@
-import { Autocomplete, Button, Chip, Grid, TextField } from '@mui/material';
+import { Autocomplete, Button, Grid, TextField } from '@mui/material';
 import { FormikProps } from 'formik';
-import { FC } from 'react';
-import { DisabledMapper, ifValidAfterTrimThen } from '../utils/constants';
+import React, { FC, useState } from 'react';
+import { DisabledMapper } from '../utils/constants';
 import { FormikEntity, Project } from '../utils/data.model';
+import RadioGroupInput from './RadioGroupInput';
 
 type UserForm = {
   form: FormikProps<FormikEntity>;
@@ -12,6 +13,8 @@ type UserForm = {
 };
 
 const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
+  const [inputValue, setInputValue] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const sectionOptions = data.find(
     (item) => item.project_type_id === form.values.projectType?.project_type_id
   )?.sections;
@@ -19,6 +22,30 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
   const fieldOptions = sectionOptions?.find(
     (item) => item.section_selector === form.values.section?.section_selector
   )?.fields;
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevent form submission on Enter
+
+      const trimmedValue = inputValue.trim(); // Trim spaces
+
+      // Check if the trimmed value is non-empty and not already in the list
+      if (trimmedValue && !form.values.conditions.includes(trimmedValue)) {
+        form.setFieldValue('conditions', [
+          ...form.values.conditions,
+          trimmedValue,
+        ]); // Add the value to the list
+        setInputValue(''); // Clear the input field
+        setErrorMessage(''); // Clear any existing error message
+      } else {
+        // Show error message if the value exists or is invalid
+        setErrorMessage('Value already exists or is invalid.');
+      }
+    }
+  };
+
+  const trimmedConditions = form.values.conditions.map((value) => value.trim());
+
   return (
     <>
       <Grid item xs={6}>
@@ -101,27 +128,21 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
       <Grid item xs={12}>
         <Autocomplete
           multiple
-          options={[]}
-          value={form.values.conditions}
-          onChange={(_, value, __, e) => {
-            // if (e?.option.trim() !== '') {
-            // form.setFieldValue('conditions', value);
-            // }
-            if (e) {
-              ifValidAfterTrimThen(e.option, () =>
-                form.setFieldValue('conditions', value)
-              );
-            }
+          options={[]} // No predefined options
+          value={trimmedConditions}
+          onChange={(_, value) => {
+            // Filter out any empty values and ensure all new values are trimmed
+            const newValues = value
+              .map((val) => val.trim())
+              .filter((val) => val);
+            form.setFieldValue('conditions', newValues); // Update Formik value
           }}
-          freeSolo
-          renderTags={(value: readonly string[], getTagProps) =>
-            value.map((option: string, index: number) => {
-              const { key, ...rest } = getTagProps({ index });
-              return (
-                <Chip variant='filled' label={option} key={key} {...rest} />
-              );
-            })
-          }
+          freeSolo // Allow custom values
+          inputValue={inputValue}
+          onInputChange={(_, newInputValue) => {
+            setInputValue(newInputValue); // Update input value state
+            setErrorMessage(''); // Clear the error message on new input change
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -132,11 +153,49 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
               InputLabelProps={{
                 shrink: true,
               }}
+              onKeyDown={handleKeyDown} // Attach key down handler
+              error={!!errorMessage} // Display error state if error message exists
+              helperText={errorMessage} // Show the error message
             />
           )}
           fullWidth
         />
       </Grid>
+      <Grid item xs={12}>
+        <Autocomplete
+          multiple
+          options={['User', 'Admin', 'SuperAdmin']}
+          value={form.values.roles}
+          renderInput={(params) => (
+            <TextField {...params} name='roles' label='Roles' />
+          )}
+          getOptionLabel={(option) => option}
+          onChange={(_, value) => {
+            form.setFieldValue('roles', value);
+          }}
+          isOptionEqualToValue={(option, value) => option === value}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <RadioGroupInput
+          form={form}
+          label='Form Type'
+          name='formType'
+          options={[
+            { value: 'form', label: 'Form' },
+            { value: 'table', label: 'Table' },
+          ]}
+          controlProps={{
+            fullWidth: true,
+            sx: {
+              '& .MuiFormLabel-root': {
+                textAlign: 'left',
+              },
+            },
+          }}
+        />
+      </Grid>
+
       <Grid item container columns={12} spacing={2}>
         <Grid item xs={6} mt={2}>
           <Button

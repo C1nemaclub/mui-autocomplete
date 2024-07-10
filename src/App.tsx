@@ -5,6 +5,7 @@ import './App.css';
 import UserForm from './components/UserForm';
 import {
   DisabledMapper,
+  mockValues,
   data as response,
   validationSchema,
 } from './utils/constants';
@@ -19,9 +20,11 @@ function App() {
       projectType: null,
       section: null,
       field: null,
-      conditions: [],
+      conditions: mockValues,
       name: 'Default',
       description: '',
+      roles: ['User'],
+      formType: null,
     },
     onSubmit: (payload) => {
       const reqPayload = {
@@ -47,12 +50,6 @@ function App() {
         }, 620);
       });
       setData(res);
-      // form.setValues({
-      //   ...form.values,
-      //   projectType: res[0],
-      //   section: res[0].sections[0],
-      //   field: res[0].sections[0].fields[0],
-      // });
     } catch (e) {
       console.error(e);
     } finally {
@@ -71,6 +68,8 @@ function App() {
     section: false,
     field: false,
     conditions: false,
+    roles: false,
+    formType: false,
   };
 
   return (
@@ -104,6 +103,9 @@ function App() {
       </Grid>
       <pre>
         <code>{JSON.stringify(form.errors, null, 2)}</code>
+      </pre>
+      <pre>
+        <code>{JSON.stringify(form.values.formType, null, 2)}</code>
       </pre>
     </Box>
   );

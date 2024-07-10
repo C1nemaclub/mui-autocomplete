@@ -25,26 +25,16 @@ export const validationSchema = yup.object().shape({
     .required('This field is required'),
   conditions: yup
     .array()
-    .of(
-      // yup.string().test('valid', 'Test is an invalid word', (value) => {
-      //   if (value === 'Test') return false;
-      //   return true;
-      // })
-      // yup.string().min(1).trim()
-      yup.string().test('test', 'req', (value) => {
-        if (value && value.trim() !== '') {
-          return true;
-        }
-        return false;
-      })
-    )
+    .of(yup.string())
     .min(1)
     .required('This field is required'),
+  roles: yup.array().of(yup.string()).min(1).required('This field is required'),
   name: yup
     .string()
     .required('This field is required')
     .matches(/^[a-zA-Z0-9]*$/, 'Only letters and numbers are allowed'),
   description: yup.string().min(1).trim().required('This field is required'),
+  formType: yup.string().required('This field is required'),
 });
 
 export const data: Project[] = [
@@ -287,3 +277,12 @@ export const ifValidAfterTrimThen = (value: string, callback: () => void) => {
   }
   return;
 };
+
+export const mockValues = [
+  'Zenata – Messali El Hadj Airport',
+  'Norðfjörður Airport',
+  'Kansai International Airport',
+  'Eurico de Aguiar Salles Airport',
+  'Saravane Airport',
+  'Ostrava Leos Janáček Airport',
+];

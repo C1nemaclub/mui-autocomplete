@@ -28,4 +28,6 @@ export type FormikEntity = {
   conditions: string[];
   name: string;
   description: string;
+  roles: string[];
+  formType: string | null;
 };
