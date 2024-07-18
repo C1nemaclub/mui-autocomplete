@@ -181,9 +181,10 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
           form={form}
           label='Form Type'
           name='formType'
+          getOptionLabel={(option) => option.name}
           options={[
-            { value: 'form', label: 'Form' },
-            { value: 'table', label: 'Table' },
+            { value: 'd4fd-fd4sfd2', name: 'Form' },
+            { value: 'sdcw45-4da1t7', name: 'Table' },
           ]}
           controlProps={{
             fullWidth: true,

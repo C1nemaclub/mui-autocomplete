@@ -34,7 +34,7 @@ export const validationSchema = yup.object().shape({
     .required('This field is required')
     .matches(/^[a-zA-Z0-9]*$/, 'Only letters and numbers are allowed'),
   description: yup.string().min(1).trim().required('This field is required'),
-  formType: yup.string().required('This field is required'),
+  formType: yup.object().required('This field is required'),
 });
 
 export const data: Project[] = [

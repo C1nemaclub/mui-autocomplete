@@ -17,6 +17,10 @@ export type Field = {
   options: string[];
 };
 
+export type FormType = {
+  label: string;
+  value: string;
+};
 export type FormikEntity = {
   projectType: {
     project_type_id: string;
@@ -29,5 +33,5 @@ export type FormikEntity = {
   name: string;
   description: string;
   roles: string[];
-  formType: string | null;
+  formType: FormType | null;
 };

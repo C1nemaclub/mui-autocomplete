@@ -24,7 +24,7 @@ function App() {
       name: 'Default',
       description: '',
       roles: ['User'],
-      formType: null,
+      formType: { value: 'sdcw45-4da1t7', label: 'Table' },
     },
     onSubmit: (payload) => {
       const reqPayload = {

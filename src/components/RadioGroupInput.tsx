@@ -9,29 +9,27 @@ import {
   FormControlProps,
 } from '@mui/material';
 import { FormikProps } from 'formik';
-import { FC } from 'react';
 
-// type TestProps = RadioProps & FormControlProps & { label: string };
-
-interface RadioGroupInputProps extends RadioGroupProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface RadioGroupInputProps<T> extends RadioGroupProps {
   form?: FormikProps<any>;
   label?: string;
   name: string;
-  options: { value: string; label: string; disabled?: boolean }[];
+  options: T[];
   radioProps?: RadioProps;
   controlProps?: FormControlProps;
+  getOptionLabel?: (option: T) => string;
 }
 
-const RadioGroupInput: FC<RadioGroupInputProps> = ({
+const RadioGroupInput = <T,>({
   form,
   name,
   options,
   label,
   radioProps,
   controlProps,
+  getOptionLabel,
   ...rest
-}) => {
+}: RadioGroupInputProps<T>) => {
   return (
     <FormControl component='fieldset' {...controlProps}>
       <FormLabel id='demo-row-radio-buttons-group-label'>{label}</FormLabel>
@@ -39,18 +37,26 @@ const RadioGroupInput: FC<RadioGroupInputProps> = ({
         aria-labelledby='demo-row-radio-buttons-group-label'
         row
         name={name}
-        value={form && form.values[name]}
-        onChange={form && form.handleChange}
+        value={form ? JSON.stringify(form.values[name]) : ''}
+        onChange={(_, value) => {
+          form && form.setFieldValue(name, JSON.parse(value));
+        }}
         onBlur={form && form.handleBlur}
         {...rest}>
-        {options.map(({ value, label, disabled }) => {
+        {options.map((option) => {
+          const label = getOptionLabel
+            ? getOptionLabel(option)
+            : (option as any).label;
           return (
             <FormControlLabel
-              key={value}
+              key={(option as any).value}
               label={label}
-              value={value}
-              disabled={disabled}
-              checked={form && form.values[name] === value}
+              value={JSON.stringify(option)}
+              disabled={(option as any).disabled}
+              checked={
+                form &&
+                JSON.stringify(form.values[name]) === JSON.stringify(option)
+              }
               control={<Radio {...radioProps} />}
             />
           );
