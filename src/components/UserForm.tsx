@@ -178,13 +178,19 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
       </Grid>
       <Grid item xs={12}>
         <RadioGroupInput
-          form={form}
           label='Form Type'
           name='formType'
+          value={form.values.formType}
           getOptionLabel={(option) => option.name}
+          getOptionDisabled={(option) => option.name === 'Dashboard'}
+          onChange={(_, value) => {
+            form.setFieldValue('formType', value);
+          }}
           options={[
-            { value: 'd4fd-fd4sfd2', name: 'Form' },
-            { value: 'sdcw45-4da1t7', name: 'Table' },
+            { id: 'd4fd-fd4sfd2', name: 'Form' },
+            { id: 'sdcw45-4da1t7', name: 'Table' },
+            { id: '2d4f5-4d5f4', name: 'Dashboard' },
+            { id: '2d4f5-4d5f4', name: 'Report' },
           ]}
           controlProps={{
             fullWidth: true,

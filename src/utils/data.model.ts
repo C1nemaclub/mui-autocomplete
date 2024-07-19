@@ -18,8 +18,8 @@ export type Field = {
 };
 
 export type FormType = {
-  label: string;
-  value: string;
+  id: string;
+  name: string;
 };
 export type FormikEntity = {
   projectType: {

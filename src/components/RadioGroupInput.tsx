@@ -8,55 +8,69 @@ import {
   RadioProps,
   FormControlProps,
 } from '@mui/material';
-import { FormikProps } from 'formik';
 
-interface RadioGroupInputProps<T> extends RadioGroupProps {
-  form?: FormikProps<any>;
+type RadioGroupInputProps<T> = RadioGroupProps & {
+  options: Readonly<NonNullable<T>[]>;
+  value?: T;
   label?: string;
-  name: string;
-  options: T[];
+  name?: string;
   radioProps?: RadioProps;
   controlProps?: FormControlProps;
-  getOptionLabel?: (option: T) => string;
-}
+  getOptionLabel?: (option: NonNullable<T>) => string;
+  getOptionDisabled?: (option: NonNullable<T>) => boolean;
+  getOptionKey?: (option: NonNullable<T>) => string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>, value: T) => void;
+};
 
 const RadioGroupInput = <T,>({
-  form,
   name,
   options,
   label,
   radioProps,
   controlProps,
   getOptionLabel,
+  getOptionDisabled,
+  getOptionKey,
+  onChange,
+  value,
   ...rest
 }: RadioGroupInputProps<T>) => {
   return (
     <FormControl component='fieldset' {...controlProps}>
-      <FormLabel id='demo-row-radio-buttons-group-label'>{label}</FormLabel>
+      <FormLabel>{label}</FormLabel>
       <RadioGroup
-        aria-labelledby='demo-row-radio-buttons-group-label'
         row
         name={name}
-        value={form ? JSON.stringify(form.values[name]) : ''}
-        onChange={(_, value) => {
-          form && form.setFieldValue(name, JSON.parse(value));
+        value={value}
+        onChange={(e, value) => {
+          if (onChange) {
+            onChange(e, JSON.parse(value));
+          }
         }}
-        onBlur={form && form.handleBlur}
         {...rest}>
         {options.map((option) => {
           const label = getOptionLabel
             ? getOptionLabel(option)
             : (option as any).label;
+
+          const disabled = getOptionDisabled
+            ? getOptionDisabled(option)
+            : false;
+
+          const key = getOptionKey
+            ? getOptionKey(option)
+            : JSON.stringify(option);
+
+          const checked =
+            value && JSON.stringify(value) === JSON.stringify(option);
+
           return (
             <FormControlLabel
-              key={(option as any).value}
+              key={key}
               label={label}
               value={JSON.stringify(option)}
-              disabled={(option as any).disabled}
-              checked={
-                form &&
-                JSON.stringify(form.values[name]) === JSON.stringify(option)
-              }
+              disabled={disabled}
+              checked={checked}
               control={<Radio {...radioProps} />}
             />
           );
