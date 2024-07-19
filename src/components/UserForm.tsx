@@ -4,6 +4,7 @@ import React, { FC, useState } from 'react';
 import { DisabledMapper } from '../utils/constants';
 import { FormikEntity, Project } from '../utils/data.model';
 import RadioGroupInput from './RadioGroupInput';
+import NumericInput from './NumericInput';
 
 type UserForm = {
   form: FormikProps<FormikEntity>;
@@ -201,6 +202,10 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
             },
           }}
         />
+      </Grid>
+
+      <Grid item xs={12}>
+        <NumericInput form={form} />
       </Grid>
 
       <Grid item container columns={12} spacing={2}>

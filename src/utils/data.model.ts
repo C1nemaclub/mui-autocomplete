@@ -34,4 +34,5 @@ export type FormikEntity = {
   description: string;
   roles: string[];
   formType: FormType | null;
+  age: number | '';
 };

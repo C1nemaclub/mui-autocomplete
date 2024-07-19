@@ -24,8 +24,9 @@ function App() {
       name: 'Default',
       description: '',
       roles: ['User'],
-      // formType: { id: '2d4f5-4d5f4', name: 'Report' },
-      formType: { id: '', name: '' },
+      formType: { id: '2d4f5-4d5f4', name: 'Report' },
+      // formType: { id: '', name: '' },
+      age: '',
     },
     onSubmit: (payload) => {
       const reqPayload = {
@@ -105,9 +106,9 @@ function App() {
       <pre>
         <code>{JSON.stringify(form.errors, null, 2)}</code>
       </pre>
-      <pre>
+      {/* <pre>
         <code>{JSON.stringify(form.values.formType, null, 2)}</code>
-      </pre>
+      </pre> */}
     </Box>
   );
 }
