@@ -1,7 +1,6 @@
 import { Autocomplete, Button, Grid, TextField } from '@mui/material';
 import { FormikProps } from 'formik';
 import React, { FC, useState } from 'react';
-import { DisabledMapper } from '../utils/constants';
 import { FormikEntity, Project } from '../utils/data.model';
 import RadioGroupInput from './RadioGroupInput';
 import NumericInput from './NumericInput';
@@ -10,10 +9,10 @@ type UserForm = {
   form: FormikProps<FormikEntity>;
   initialValues?: FormikEntity;
   data: Project[];
-  disabledFields: DisabledMapper;
+  isEdit?: boolean;
 };
 
-const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
+const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
   const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const sectionOptions = data.find(
@@ -47,6 +46,9 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
 
   const trimmedConditions = form.values.conditions.map((value) => value.trim());
 
+  const detectedChanges =
+    JSON.stringify(form.values) !== JSON.stringify(form.initialValues);
+
   return (
     <>
       <Grid item xs={6}>
@@ -56,7 +58,6 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
           onChange={form.handleChange}
           value={form.values.name}
           fullWidth
-          disabled={disabledFields['name']}
         />
       </Grid>
       <Grid item xs={6}>
@@ -66,7 +67,6 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
           onChange={form.handleChange}
           value={form.values.description}
           fullWidth
-          disabled={disabledFields['description']}
         />
       </Grid>
       <Grid item xs={12}>
@@ -164,6 +164,7 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
       </Grid>
       <Grid item xs={12}>
         <Autocomplete
+          disabled={isEdit}
           multiple
           options={['User', 'Admin', 'SuperAdmin']}
           value={form.values.roles}
@@ -177,21 +178,50 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
           isOptionEqualToValue={(option, value) => option === value}
         />
       </Grid>
+      {/* <Grid item xs={12}>
+        <Autocomplete
+          value={form.values.formType}
+          options={[
+            { id: 'd4fd-fd4sfd2', name: 'Form' },
+            { id: 'sdcw45-4da1t7', name: 'Table' },
+            { id: '2d4f5-4d5f34', name: 'Dashboard' },
+            { id: '2d4f5-4d5f4', name: 'Report' },
+          ]}
+          isOptionEqualToValue={(option, value) => {
+            return option.id === value?.id;
+          }}
+          getOptionLabel={(option) => option.name}
+          getOptionDisabled={(option) => option.name === 'Dashboard'}
+          onChange={(_, value) => {
+            form.setFieldValue('formType', value);
+          }}
+          renderInput={(params) => (
+            <TextField {...params} name='formType' label='Form Type' />
+          )}
+          fullWidth
+        />
+      </Grid> */}
+
       <Grid item xs={12}>
         <RadioGroupInput
           label='Form Type'
           name='formType'
           value={form.values.formType}
           getOptionLabel={(option) => option.name}
-          getOptionDisabled={(option) => option.name === 'Dashboard'}
+          getOptionDisabled={(option) =>
+            option.name === 'Dashboard' || Boolean(isEdit)
+          }
           onChange={(_, value) => {
             form.setFieldValue('formType', value);
           }}
+          isOptionEqualToValue={(option, value) => {
+            return option.code === value?.id;
+          }}
           options={[
-            { id: 'd4fd-fd4sfd2', name: 'Form' },
-            { id: 'sdcw45-4da1t7', name: 'Table' },
-            { id: '2d4f5-4d5f4', name: 'Dashboard' },
-            { id: '2d4f5-4d5f4', name: 'Report' },
+            { code: 'd4fd-fd4sfd2', name: 'Form' },
+            { code: 'sdcw45-4da1t7', name: 'Table' },
+            { code: '2d4f5-4d5f34', name: 'Dashboard' },
+            { code: '2d4f5-4d5f4', name: 'Report' },
           ]}
           controlProps={{
             fullWidth: true,
@@ -214,8 +244,8 @@ const UserForm: FC<UserForm> = ({ form, data, disabledFields }) => {
             variant='contained'
             type='submit'
             fullWidth
-            disabled={!form.isValid}>
-            Submit
+            disabled={!form.isValid || (!detectedChanges && isEdit)}>
+            {isEdit ? 'Update' : 'Create'}
           </Button>
         </Grid>
         <Grid item xs={6} mt={2}>

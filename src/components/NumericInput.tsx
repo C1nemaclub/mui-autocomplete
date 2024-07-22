@@ -1,31 +1,53 @@
 import React, { FC } from 'react';
-import { TextField } from '@mui/material';
+import { IconButton, TextField } from '@mui/material';
 import { FormikProps } from 'formik';
 import { FormikEntity } from '../utils/data.model';
-
+import AddIcon from '@mui/icons-material/Add';
 interface NumericInputProps {
   form: FormikProps<FormikEntity>;
 }
 
 const NumericInput: FC<NumericInputProps> = ({ form }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.match(/[^0-9]/)) {
+    const value = event.target.value;
+    if (value.match(/[^0-9]/)) {
       event.preventDefault();
       return;
     }
+    if (value === '') {
+      form.setFieldValue('age', '', true);
+      return;
+    }
 
-    form.setFieldValue('age', Number(event.target.value));
+    form.setFieldValue('age', Number(value), true);
   };
+
+  const isError = Boolean(form.errors.age && form.touched.age);
+
   return (
     <TextField
-      value={form.values.age}
+      type='tel'
       fullWidth
+      value={form.values.age}
       name='age'
       id='phone_number'
       label='Age'
       variant='outlined'
       inputProps={{ inputMode: 'numeric' }}
+      onBlur={form.handleBlur}
       onChange={handleChange}
+      error={isError}
+      helperText={isError ? form.errors.age : ''}
+      InputProps={{
+        endAdornment: (
+          <IconButton
+            onClick={() =>
+              form.setFieldValue('age', Number(form.values.age) + 1)
+            }>
+            <AddIcon />
+          </IconButton>
+        ),
+      }}
     />
   );
 };

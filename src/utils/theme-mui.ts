@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material';
-import { blue } from '@mui/material/colors';
+// import { blue } from '@mui/material/colors';
 
 export const theme = createTheme({
   palette: {
@@ -16,7 +16,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           '& .Mui-disabled + .MuiOutlinedInput-root': {
-            border: `1px solid ${blue['A100']}`,
+            // border: `1px solid ${blue['A100']}`,
           },
         },
       },

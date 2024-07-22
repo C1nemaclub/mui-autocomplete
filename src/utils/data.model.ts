@@ -36,3 +36,5 @@ export type FormikEntity = {
   formType: FormType | null;
   age: number | '';
 };
+
+export type QueueParams = Record<'queueId', string>;

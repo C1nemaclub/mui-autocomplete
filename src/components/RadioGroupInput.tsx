@@ -9,9 +9,9 @@ import {
   FormControlProps,
 } from '@mui/material';
 
-type RadioGroupInputProps<T> = RadioGroupProps & {
+type RadioGroupInputProps<T, K> = RadioGroupProps & {
   options: Readonly<NonNullable<T>[]>;
-  value?: T;
+  value?: K;
   label?: string;
   name?: string;
   radioProps?: RadioProps;
@@ -19,10 +19,11 @@ type RadioGroupInputProps<T> = RadioGroupProps & {
   getOptionLabel?: (option: NonNullable<T>) => string;
   getOptionDisabled?: (option: NonNullable<T>) => boolean;
   getOptionKey?: (option: NonNullable<T>) => string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>, value: T) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>, value: K) => void;
+  isOptionEqualToValue?: (option: T, value: K) => boolean;
 };
 
-const RadioGroupInput = <T,>({
+const RadioGroupInput = <T, K>({
   name,
   options,
   label,
@@ -33,8 +34,9 @@ const RadioGroupInput = <T,>({
   getOptionKey,
   onChange,
   value,
+  isOptionEqualToValue,
   ...rest
-}: RadioGroupInputProps<T>) => {
+}: RadioGroupInputProps<T, K>) => {
   return (
     <FormControl component='fieldset' {...controlProps}>
       <FormLabel>{label}</FormLabel>
@@ -64,13 +66,19 @@ const RadioGroupInput = <T,>({
           const checked =
             value && JSON.stringify(value) === JSON.stringify(option);
 
+          const isEqual = isOptionEqualToValue
+            ? isOptionEqualToValue(option, value)
+            : false;
+
+          const finalChecked = isEqual ? checked || isEqual : checked;
+
           return (
             <FormControlLabel
               key={key}
               label={label}
               value={JSON.stringify(option)}
               disabled={disabled}
-              checked={checked}
+              checked={finalChecked}
               control={<Radio {...radioProps} />}
             />
           );

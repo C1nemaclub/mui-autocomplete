@@ -1,4 +1,4 @@
-import { Project } from './data.model';
+import { FormikEntity, Project } from './data.model';
 import * as yup from 'yup';
 
 export const validationSchema = yup.object().shape({
@@ -35,6 +35,11 @@ export const validationSchema = yup.object().shape({
     .matches(/^[a-zA-Z0-9]*$/, 'Only letters and numbers are allowed'),
   description: yup.string().min(1).trim().required('This field is required'),
   formType: yup.object().required('This field is required'),
+  age: yup
+    .number()
+    .min(1, 'Age must be a number between 1 and 999')
+    .max(999, 'Age must be a number between 1 and 999')
+    .required('This field is required'),
 });
 
 export const data: Project[] = [
@@ -286,3 +291,126 @@ export const mockValues = [
   'Saravane Airport',
   'Ostrava Leos Janáček Airport',
 ];
+
+// Mock Forms
+export const mockForms: FormikEntity[] = [
+  {
+    projectType: {
+      project_type_id: 'web',
+      project_type_name: 'Web',
+    },
+    section: {
+      section_name: 'Technologies',
+      section_selector: 'technologies',
+    },
+    field: {
+      field_name: 'Frontend',
+      field_selector: 'frontend',
+    },
+    conditions: ['Eurico de Aguiar Salles Airport', 'Saravane Airport'],
+    name: 'Sam',
+    description: 'This is a description',
+    roles: ['SuperAdmin'],
+    formType: {
+      id: '2d4f5-4d5f4',
+      name: 'Report',
+    },
+    age: 77,
+  },
+];
+
+export const initialEntity = {
+  projectType: {
+    project_type_id: 'mobile',
+    project_type_name: 'Mobile',
+    sections: [
+      {
+        section_name: 'General',
+        section_selector: 'general',
+        fields: [
+          {
+            field_type: 'text',
+            field_name: 'Project Name',
+            field_selector: 'project_name',
+            options: [],
+          },
+          {
+            field_type: 'text',
+            field_name: 'Project Description',
+            field_selector: 'project_description',
+            options: [],
+          },
+          {
+            field_type: 'text',
+            field_name: 'Project URL',
+            field_selector: 'project_url',
+            options: [],
+          },
+        ],
+      },
+      {
+        section_name: 'Technologies',
+        section_selector: 'technologies',
+        fields: [
+          {
+            field_type: 'checkbox',
+            field_name: 'Mobile Platforms',
+            field_selector: 'mobile_platforms',
+            options: ['iOS', 'Android'],
+          },
+          {
+            field_type: 'checkbox',
+            field_name: 'Development Frameworks',
+            field_selector: 'development_frameworks',
+            options: ['React Native', 'Flutter', 'Ionic'],
+          },
+          {
+            field_type: 'checkbox',
+            field_name: 'Backend',
+            field_selector: 'backend',
+            options: ['Firebase', 'AWS Amplify', 'GraphQL'],
+          },
+        ],
+      },
+    ],
+  },
+  section: {
+    section_name: 'General',
+    section_selector: 'general',
+    fields: [
+      {
+        field_type: 'text',
+        field_name: 'Project Name',
+        field_selector: 'project_name',
+        options: [],
+      },
+      {
+        field_type: 'text',
+        field_name: 'Project Description',
+        field_selector: 'project_description',
+        options: [],
+      },
+      {
+        field_type: 'text',
+        field_name: 'Project URL',
+        field_selector: 'project_url',
+        options: [],
+      },
+    ],
+  },
+  field: {
+    field_type: 'text',
+    field_name: 'Project Description',
+    field_selector: 'project_description',
+    options: [],
+  },
+  conditions: ['Saravane Airport'],
+  name: 'Sam',
+  description: 'My Description',
+  roles: ['SuperAdmin', 'Admin'],
+  formType: {
+    code: 'sdcw45-4da1t7',
+    name: 'Table',
+  },
+  age: 469,
+} as unknown as FormikEntity;
