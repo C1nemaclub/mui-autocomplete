@@ -1,13 +1,12 @@
 import { FormikProps, useFormik } from 'formik';
-import { FormikEntity, QueueParams } from '../utils/data.model';
 import React, { createContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   initialEntity,
-  mockForms,
   mockValues,
   validationSchema,
 } from '../utils/constants';
-import { useParams } from 'react-router-dom';
+import { FormikEntity, QueueParams } from '../utils/data.model';
 
 type FormContextType = {
   form: FormikProps<FormikEntity>;
@@ -40,6 +39,7 @@ export const FormContextProvider = ({
       roles: ['User'],
       formType: { id: 'd4fd-fd4sfd2', name: 'Form' },
       age: '',
+      option: null,
     },
     onSubmit: (payload, { resetForm }) => {
       const reqPayload = {

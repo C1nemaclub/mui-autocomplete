@@ -35,6 +35,7 @@ export type FormikEntity = {
   roles: string[];
   formType: FormType | null;
   age: number | '';
+  option: { value: string; label: string } | null;
 };
 
 export type QueueParams = Record<'queueId', string>;

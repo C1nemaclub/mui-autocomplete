@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import AddIcon from '@mui/icons-material/Add';
 import { IconButton, TextField } from '@mui/material';
 import { FormikProps } from 'formik';
+import React, { FC } from 'react';
 import { FormikEntity } from '../utils/data.model';
-import AddIcon from '@mui/icons-material/Add';
 interface NumericInputProps {
   form: FormikProps<FormikEntity>;
 }

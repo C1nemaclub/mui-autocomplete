@@ -1,12 +1,12 @@
 import {
   FormControl,
   FormControlLabel,
+  FormControlProps,
+  FormLabel,
   Radio,
   RadioGroup,
   RadioGroupProps,
-  FormLabel,
   RadioProps,
-  FormControlProps,
 } from '@mui/material';
 
 type RadioGroupInputProps<T, K> = RadioGroupProps & {

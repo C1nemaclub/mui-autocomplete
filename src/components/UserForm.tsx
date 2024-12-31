@@ -2,8 +2,9 @@ import { Autocomplete, Button, Grid, TextField } from '@mui/material';
 import { FormikProps } from 'formik';
 import React, { FC, useState } from 'react';
 import { FormikEntity, Project } from '../utils/data.model';
-import RadioGroupInput from './RadioGroupInput';
 import NumericInput from './NumericInput';
+import RadioGroupInput from './RadioGroupInput';
+import SelectField from './SelectField';
 
 type UserForm = {
   form: FormikProps<FormikEntity>;
@@ -237,7 +238,20 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
       <Grid item xs={12}>
         <NumericInput form={form} />
       </Grid>
-
+      <Grid item xs={12}>
+        <SelectField
+          options={[
+            { value: 'option-1', label: 'Option 1' },
+            { value: 'option-2', label: 'Option 2' },
+          ]}
+          value={form.values.option}
+          getOptionLabel={(option) => option.label}
+          onChange={(_, value) => {
+            form.setFieldValue('option', value);
+          }}
+          label='Select an Option'
+        />
+      </Grid>
       <Grid item container columns={12} spacing={2}>
         <Grid item xs={6} mt={2}>
           <Button
