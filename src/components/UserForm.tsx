@@ -1,10 +1,9 @@
-import { Autocomplete, Button, Grid, TextField } from '@mui/material';
+import { Button, Grid, TextField } from '@mui/material';
 import { FormikProps } from 'formik';
-import React, { FC, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
+import type ReactQuill from 'react-quill';
 import { FormikEntity, Project } from '../utils/data.model';
-import NumericInput from './NumericInput';
-import RadioGroupInput from './RadioGroupInput';
-import SelectField from './SelectField';
+import TipTapEditor from './TipTapEditor';
 
 type UserForm = {
   form: FormikProps<FormikEntity>;
@@ -14,6 +13,10 @@ type UserForm = {
 };
 
 const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
+  const quillRef = useRef<ReactQuill | null>(null);
+  const [insertMention, setInsertMentionHandler] =
+    useState<(value: string) => void | null>();
+
   const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const sectionOptions = data.find(
@@ -50,9 +53,33 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
   const detectedChanges =
     JSON.stringify(form.values) !== JSON.stringify(form.initialValues);
 
+  const addMention = (value: string = '123', id: string = '123') => {
+    if (!quillRef.current) return;
+    const quill = quillRef.current.getEditor();
+    const mod = quill.getModule('mention');
+
+    mod.insertItem(
+      { id: id, value: value, denotationChar: '@', test: 'ttttt' },
+      true,
+      {
+        blotName: 'mention',
+      }
+    );
+    return;
+  };
+
+  const insertMentionToTipTap = () => {
+    console.log('hello');
+    if (insertMention) {
+      console.log("insertMention('Sam')");
+
+      insertMention('Sam');
+    }
+  };
+
   return (
     <>
-      <Grid item xs={6}>
+      {/* <Grid item xs={6}>
         <TextField
           name='name'
           label='Name'
@@ -60,7 +87,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           value={form.values.name}
           fullWidth
         />
-      </Grid>
+      </Grid> */}
       <Grid item xs={6}>
         <TextField
           name='description'
@@ -70,7 +97,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           fullWidth
         />
       </Grid>
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Autocomplete
           fullWidth
           options={data}
@@ -88,8 +115,8 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
             option.project_type_id === value.project_type_id
           }
         />
-      </Grid>
-
+      </Grid> */}
+      {/* 
       <Grid item xs={6}>
         <Autocomplete
           fullWidth
@@ -108,8 +135,8 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
             option.section_selector === value.section_selector
           }
         />
-      </Grid>
-      <Grid item xs={6}>
+      </Grid> */}
+      {/* <Grid item xs={6}>
         <Autocomplete
           fullWidth
           options={fieldOptions || []}
@@ -126,8 +153,8 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
             option.field_selector === value.field_selector
           }
         />
-      </Grid>
-      <Grid item xs={12}>
+      </Grid> */}
+      {/* <Grid item xs={12}>
         <Autocomplete
           multiple
           options={[]} // No predefined options
@@ -162,8 +189,8 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           )}
           fullWidth
         />
-      </Grid>
-      <Grid item xs={12}>
+      </Grid> */}
+      {/* <Grid item xs={12}>
         <Autocomplete
           disabled={isEdit}
           multiple
@@ -178,7 +205,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           }}
           isOptionEqualToValue={(option, value) => option === value}
         />
-      </Grid>
+      </Grid> */}
       {/* <Grid item xs={12}>
         <Autocomplete
           value={form.values.formType}
@@ -203,7 +230,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
         />
       </Grid> */}
 
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <RadioGroupInput
           label='Form Type'
           name='formType'
@@ -233,12 +260,12 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
             },
           }}
         />
-      </Grid>
+      </Grid> */}
 
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <NumericInput form={form} />
-      </Grid>
-      <Grid item xs={12}>
+      </Grid> */}
+      {/* <Grid item xs={12}>
         <SelectField
           options={[
             { value: 'option-1', label: 'Option 1' },
@@ -251,6 +278,31 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           }}
           label='Select an Option'
         />
+      </Grid> */}
+      {/* <Grid item xs={12}>
+        <QuillMention
+          value={form.values.name}
+          onChange={(value) => form.setFieldValue('name', value)}
+          // label='Type here...'
+          ref={quillRef}
+        />
+      </Grid> */}
+      <Grid item xs={12}>
+        <TipTapEditor
+          value={form.values.description}
+          onChange={(value) => form.setFieldValue('description', value)}
+          setMentionHandler={setInsertMentionHandler}
+          label='Description'
+        />
+      </Grid>
+
+      <Grid item xs={12}>
+        <Button
+          variant='contained'
+          onClick={() => insertMentionToTipTap()}
+          fullWidth>
+          Add Mention
+        </Button>
       </Grid>
       <Grid item container columns={12} spacing={2}>
         <Grid item xs={6} mt={2}>

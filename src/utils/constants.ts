@@ -29,10 +29,8 @@ export const validationSchema = yup.object().shape({
     .min(1)
     .required('This field is required'),
   roles: yup.array().of(yup.string()).min(1).required('This field is required'),
-  name: yup
-    .string()
-    .required('This field is required')
-    .matches(/^[a-zA-Z0-9]*$/, 'Only letters and numbers are allowed'),
+  name: yup.string().required('This field is required'),
+  // .matches(/^[a-zA-Z0-9]*$/, 'Only letters and numbers are allowed'),
   description: yup.string().min(1).trim().required('This field is required'),
   formType: yup.object().required('This field is required'),
   // age: yup
@@ -416,8 +414,9 @@ export const initialEntity = {
     options: [],
   },
   conditions: ['Saravane Airport'],
-  name: 'Sam',
-  description: 'My Description',
+  name: '<p>I believe this is a mention <span class="mention" data-id="123" data-value="Sam" data-denotation-char="" data-test="ttttt">﻿<span contenteditable="false"><span class="ql-mention-denotation-char"></span>Sam</span>﻿</span></p>',
+  description:
+    '<p>Hi everyone! Don’t forget the daily stand up at 8 AM.</p><p><span data-type="mention" data-id="Jennifer Grey">',
   roles: ['SuperAdmin', 'Admin'],
   formType: {
     code: 'sdcw45-4da1t7',

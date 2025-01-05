@@ -1,17 +1,8 @@
-import {
-  Autocomplete,
-  Box,
-  Chip,
-  CircularProgress,
-  Grid,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { CircularProgress, Grid, Typography } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { FormContext } from '../context/FormContext';
 import { data as response } from '../utils/constants';
 import { Project } from '../utils/data.model';
-import CustomTextField from './CustomTextField';
 import UserForm from './UserForm';
 
 const Form = () => {
@@ -63,34 +54,6 @@ const Form = () => {
           <UserForm form={form} data={data} isEdit={isEdit} />
         )}
       </Grid>
-      <Box mt={4}>
-        <CustomTextField
-          value={customValue}
-          label='Custom Input'
-          name='customValue'
-          onChange={(e) => {
-            setCustomValue(e);
-          }}
-        />
-      </Box>
-      <Autocomplete
-        clearIcon={false}
-        options={[]}
-        freeSolo
-        multiple
-        renderTags={(value, props) =>
-          value.map((option, index) => (
-            <Chip label={option} {...props({ index })} />
-          ))
-        }
-        renderInput={(params) => (
-          <TextField
-            inputRef={params.InputProps.ref}
-            label='Add Tags'
-            {...params}
-          />
-        )}
-      />
     </>
   );
 };

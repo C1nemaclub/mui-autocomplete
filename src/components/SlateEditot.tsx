@@ -19,6 +19,7 @@ const initialValue = [
   {
     type: 'bordered-text',
     children: [{ text: 'Inside the square' }],
+    // isText
   },
   {
     type: 'paragraph',
@@ -39,7 +40,7 @@ const SlateEditor = () => {
         return (
           <Box
             {...attributes}
-            component='span'
+            component='div'
             contentEditable={false}
             sx={{
               display: 'inline-flex',

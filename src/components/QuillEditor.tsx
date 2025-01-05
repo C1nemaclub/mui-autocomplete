@@ -1,8 +1,13 @@
 import { Button, Stack } from '@mui/material';
 import Delta from 'quill-delta';
+import { Mention, MentionBlot } from 'quill-mention';
+import 'quill-mention/autoregister';
 import { useRef, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import Editor from './Editor';
+
+Quill.register({ 'blots/mention': MentionBlot, 'modules/mention': Mention });
 
 // Define a custom 'border' format
 const Inline = Quill.import('blots/inline');
@@ -53,6 +58,7 @@ const initialContent = new Delta()
   .insert('content', { underline: true })
   .insert(' ')
   .insert('with a border', { border: '2px dashed blue' }) // Add custom border format
+  .insert('with a border', { border: '2px dashed blue' }) // Add custom border format
   .insert('Hello')
   .insert('\n');
 
@@ -80,7 +86,10 @@ const initialDelta: Delta = {
 };
 
 const QuillEditor = () => {
-  const quillRef = useRef<ReactQuill | null>(null);
+  const refQuill = useRef<ReactQuill | null>(null);
+  const [range, setRange] = useState();
+  const [lastChange, setLastChange] = useState();
+  const [readOnly, setReadOnly] = useState(false);
 
   const [editorContent, setEditorContent] = useState<Delta>(initialDelta);
 
@@ -88,6 +97,8 @@ const QuillEditor = () => {
     // console.log(value, 'value');
     setEditorContent(value);
   };
+
+  const quillRef = useRef();
 
   const getPlainText = () => {
     if (quillRef.current) {
@@ -141,17 +152,50 @@ const QuillEditor = () => {
         readOnly={false}
         modules={{
           toolbar: false,
+          // mention: {
+          //   allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+          //   mentionDenotationChars: ['@'],
+          //   source: function (searchTerm, renderList) {
+          //     const values = ['Sam', 'Samantha', 'Sammy'];
+          //     if (searchTerm.length === 0) {
+          //       renderList(values, searchTerm);
+          //     } else {
+          //       const matches = [];
+          //       for (let i = 0; i < values.length; i++)
+          //         if (
+          //           ~values[i].toLowerCase().indexOf(searchTerm.toLowerCase())
+          //         )
+          //           matches.push(values[i]);
+          //       renderList(matches, searchTerm);
+          //     }
+          //   },
+          // },
         }}
-        formats={['border']} // Allow only the 'border' format
+        formats={['border', 'mentiion']} // Allow only the 'border' format
       />
-      <div>
+      {/* <div>
         <h3>Editor Content (Delta Format):</h3>
         <pre>{JSON.stringify(editorContent, null, 2)}</pre>
       </div>
       <div>
         <h3>Plain Text Output:</h3>
         <pre>{plainText}</pre>
-      </div>
+      </div> */}
+      <Editor
+        ref={refQuill}
+        readOnly={readOnly}
+        // defaultValue={new Delta()
+        //   .insert('Hello')
+        //   .insert('\n', { header: 1 })
+        //   .insert('Some ')
+        //   .insert('initial', { bold: true })
+        //   .insert(' ')
+        //   .insert('content', { underline: true })
+        //   .insert('\n')}
+        defaultValue={initialContent}
+        onSelectionChange={setRange}
+        onTextChange={setLastChange}
+      />
 
       <Stack
         direction='row'

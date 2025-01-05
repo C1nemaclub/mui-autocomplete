@@ -1,0 +1,96 @@
+.mention-list-item {
+  border: 2px solid red;
+}
+
+.mention-container {
+  border: 2px solid green;
+}
+
+.mention-list {
+  border: 2px solid yellow;
+}
+.mention > span {
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  line-height: 30px;
+  user-select: none;
+}
+
+.focused .ql-container.ql-snow {
+  border: 1px solid dodgerblue;
+}
+
+.ql-container.ql-snow {
+  border: 1px solid rgb(77, 77, 77);
+  font-size: medium;
+}
+.ql-container {
+  border-radius: 4px;
+}
+
+.mention {
+  background-color: rgba(163, 5, 255, 0.2);
+  border-radius: 0.4rem;
+  box-decoration-break: clone;
+  color: #c073e4;
+  padding: 0.1rem 0.3rem;
+  margin: 0px 2px;
+  &::after {
+    content: '\200B';
+  }
+}
+
+.mention-image {
+  height: 30px;
+  width: 20px;
+  object-fit: contain;
+}
+
+.tiptap.ProseMirror {
+  border: 1px solid rgb(77, 77, 77);
+  font-size: medium;
+  height: '100%';
+  min-height: 56px;
+  border-radius: 4px;
+  outline: none;
+  text-align: left;
+  padding: 0 14px;
+}
+
+.tiptap.ProseMirror.ProseMirror-focused {
+  border: 1px solid dodgerblue;
+}
+
+.tiptap.placeholder {
+  transition: 0.2s;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(5%, -50%);
+  background-color: #121212;
+  padding: 0 10px;
+  font-size: medium;
+  pointer-events: none; /* Ensures the label doesn't block clicks on the editor */
+}
+
+.tiptap.placeholder.focused,
+.tiptap.placeholder.has-value {
+  top: 0;
+  left: 0;
+  transform: translate(15%, -50%);
+  color: dodgerblue;
+  font-size: small;
+}
+
+.tiptap.placeholder.empty {
+  color: #adb5bd;
+  font-size: medium;
+}
+
+.tiptap.placeholder.empty.focused {
+  top: 0;
+  left: 0;
+  transform: translate(15%, -50%);
+  color: dodgerblue;
+  font-size: small;
+}

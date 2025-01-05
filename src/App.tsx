@@ -3,7 +3,6 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import Form from './components/Form';
 import Navbar from './components/Navbar';
-import QuillEditor from './components/QuillEditor';
 import CustomStepper from './components/Steps/CustomStepper';
 import SubList from './components/SubList/SubList';
 import { FormContextProvider } from './context/FormContext';
@@ -37,8 +36,12 @@ function App() {
           path='/editor'
           element={
             <>
-              <QuillEditor />
+              {/* <QuillMention /> */}
+              {/* <QuillEditor /> */}
               {/* <SlateEditor /> */}
+              {/* <BasicMentions /> */}
+              {/* <TipTapEditor /> */}
+              Hey!
             </>
           }
         />
