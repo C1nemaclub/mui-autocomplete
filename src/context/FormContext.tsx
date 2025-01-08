@@ -35,7 +35,7 @@ export const FormContextProvider = ({
       field: null,
       conditions: mockValues,
       name: '',
-      description: '',
+      description: 'Hello this is sam {{Sam.Sam}}',
       roles: ['User'],
       formType: { id: 'd4fd-fd4sfd2', name: 'Form' },
       age: '',

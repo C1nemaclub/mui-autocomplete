@@ -293,7 +293,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           label='Description'
         />
       </Grid>
-
+      <pre>{JSON.stringify(form.values.description, null, 2)}</pre>
       <Grid item xs={12}>
         <Button
           variant='contained'
