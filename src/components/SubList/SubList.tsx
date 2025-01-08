@@ -1,14 +1,15 @@
-import { ExpandLess, ExpandMore, InsertComment } from '@mui/icons-material';
+import { InsertComment } from '@mui/icons-material';
 import {
   Box,
   Button,
-  Collapse,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
 import React, { useState } from 'react';
+import CollapsibleListItem from '../CollapsibleListItem';
 
 const items = [
   {
@@ -74,13 +75,13 @@ const SubList: React.FC<SubListProps> = ({ currentItem, currentSubItem }) => {
 
   return (
     <Box>
-      <List>
+      {/* <List>
         {items.map((item) => (
           <React.Fragment key={item.value}>
             <ListItemButton
               onClick={() => {
                 handleToggle(item.value);
-                handleSelectItem(item.value);
+                // handleSelectItem(item.value);
               }}
               selected={selectedItem === item.value}>
               <ListItemIcon>
@@ -105,7 +106,8 @@ const SubList: React.FC<SubListProps> = ({ currentItem, currentSubItem }) => {
                     onClick={() =>
                       handleSelectSubItem(item.value, subItem.value)
                     }
-                    selected={selectedSubItem === subItem.value}>
+                    selected={selectedSubItem === subItem.value}
+                    >
                     <ListItemIcon>
                       <InsertComment />
                     </ListItemIcon>
@@ -116,6 +118,38 @@ const SubList: React.FC<SubListProps> = ({ currentItem, currentSubItem }) => {
             </Collapse>
           </React.Fragment>
         ))}
+      </List> */}
+      <List sx={{ p: 2 }}>
+        {items.map((item) => {
+          return (
+            <CollapsibleListItem
+              title={item.label}
+              key={item.value}
+              selected={selectedItem === item.value}>
+              {item.subItems.map((subItem) => {
+                return (
+                  <ListItem
+                    title={subItem.label}
+                    key={subItem.value}
+                    disableGutters
+                    disablePadding
+                    sx={{ pl: 2 }}>
+                    <ListItemButton
+                      onClick={() =>
+                        handleSelectSubItem(item.value, subItem.value)
+                      }
+                      selected={selectedSubItem === subItem.value}>
+                      <ListItemIcon>
+                        <InsertComment />
+                      </ListItemIcon>
+                      <ListItemText primary={subItem.label} />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
+            </CollapsibleListItem>
+          );
+        })}
       </List>
       <Button variant='contained' disabled={!selectedItem || !selectedSubItem}>
         Continue

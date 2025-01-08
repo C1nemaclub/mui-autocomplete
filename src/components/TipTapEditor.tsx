@@ -6,7 +6,7 @@ import Document from '@tiptap/extension-document';
 import Mention from '@tiptap/extension-mention';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { EditorContent, generateHTML, getText, useEditor } from '@tiptap/react';
 import { format } from 'date-fns';
 import { useState, type Dispatch, type FC, type SetStateAction } from 'react';
 
@@ -35,7 +35,7 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
       .chain()
       .focus()
       .insertContent(
-        `<span data-type="mention" data-denotation-char="#"   data-id="${text}"></span>`
+        `<span data-type="mention" data-denotation-char="#" data-label="${text}"  data-id="${text}"></span>`
       )
       .run();
   };
@@ -54,18 +54,20 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
           return node.attrs.id ?? node.attrs.label;
         },
         // renderHTML({ options, node }) {
+        //   console.log(options, node);
+
         //   return [
         //     'span',
         //     mergeAttributes(options.HTMLAttributes, {
         //       class: 'mention',
         //     }),
-        //     [
-        //       'img',
-        //       {
-        //         src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png',
-        //         class: 'mention-image',
-        //       },
-        //     ],
+        //     // [
+        //     //   'img',
+        //     //   {
+        //     //     src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png',
+        //     //     class: 'mention-image',
+        //     //   },
+        //     // ],
         //     `
         //     ${options.suggestion.char}
         //     ${node.attrs.label ?? node.attrs.id}`,
@@ -73,7 +75,8 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
         // },
       }),
     ],
-    content: value,
+    content:
+      '<p>hello World <span data-type="mention" class="mention" data-id="Sam" data-label="Sam">Sam</span></p><p>Also this is more TEXT !!! <span data-type="mention" class="mention" data-id="Sam" data-label="Sam">Sam</span></p>',
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
@@ -145,8 +148,73 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
     return classes;
   };
 
+  // const serializedText = editor.getText({
+  //   blockSeparator: 'x',
+  //   textSerializers: {
+  //     mention: ({ node }: { node: any }) => {
+  //       return `{{${node.attrs.id}}}`;
+  //     },
+  //   },s
+  // });
+
+  // function serializedTextToJson(input: string): DocNode {
+  //   const mentionPattern = /{{(\w+)\.(\w+)}}/;
+  //   const match = mentionPattern.exec(input);
+
+  //   if (match && match[1] === match[2]) {
+  //     const mentionNode: MentionNode = {
+  //       type: 'mention',
+  //       attrs: {
+  //         id: match[1],
+  //         label: match[2],
+  //       },
+  //     };
+
+  //     const paragraphNode: ParagraphNode = {
+  //       type: 'paragraph',
+  //       content: [mentionNode],
+  //     };
+
+  //     const docNode: DocNode = {
+  //       type: 'doc',
+  //       content: [paragraphNode],
+  //     };
+
+  //     return docNode;
+  //   }
+
+  //   throw new Error('Invalid input format');
+  // }
+
+  const serialized = getText(editor.state.doc, {
+    textSerializers: {
+      mention: ({ node }) => {
+        return `{{${node.attrs.id}.${node.attrs.label}}}`;
+      },
+    },
+  });
+
+  const getHTML = generateHTML(editor.getJSON(), [
+    Text,
+    Document,
+    Paragraph,
+    Mention.configure({
+      HTMLAttributes: {
+        class: 'mention',
+      },
+      deleteTriggerWithBackspace: true,
+      renderHTML: ({ node }) => {
+        return node.attrs.id ?? node.attrs.label;
+      },
+    }),
+  ]);
+
   return (
-    <Box position={'relative'}>
+    <Box
+      position={'relative'}
+      sx={{
+        '--primary-color': ({ palette }) => palette.primary.main,
+      }}>
       <EditorContent editor={editor} className='editor-content' />
       {type === 'date' && renderDateMarkup()}
       {label && (
@@ -160,6 +228,23 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
           {label}
         </Box>
       )}
+      <pre>{JSON.stringify(editor.getJSON(), null, 2)}</pre>
+      <pre>
+        {JSON.stringify(
+          editor.getText({
+            blockSeparator: '',
+            textSerializers: {
+              mention: ({ node }) => {
+                return `{{${node.attrs.id}.${node.attrs.label}}}`;
+              },
+            },
+          }),
+          null,
+          2
+        )}
+      </pre>
+      <pre>{JSON.stringify({ serialized }, null, 2)}</pre>
+      <pre>{JSON.stringify({ getHTML }, null, 2)}</pre>
     </Box>
   );
 };

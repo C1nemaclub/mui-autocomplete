@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import Form from './components/Form';
+import MyList from './components/MyList';
 import Navbar from './components/Navbar';
 import CustomStepper from './components/Steps/CustomStepper';
 import SubList from './components/SubList/SubList';
@@ -50,6 +51,7 @@ function App() {
           element={
             <>
               <SubList currentItem={'2'} currentSubItem={'2.2'} />
+              <MyList />
             </>
           }
         />

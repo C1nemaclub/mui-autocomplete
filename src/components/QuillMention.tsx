@@ -9,7 +9,6 @@ Quill.register('modules/mention', mention);
 interface QuillMentionProps {
   value: string;
   onChange: (value: string) => void;
-  label?: string;
 }
 
 import { forwardRef } from 'react';
@@ -17,23 +16,15 @@ import { forwardRef } from 'react';
 const QuillMention: FC<QuillMentionProps> = forwardRef<
   ReactQuill,
   QuillMentionProps
->(({ value, onChange, label }, ref) => {
+>(({ value, onChange }, ref) => {
   // const quillRef = useRef<ReactQuill | null>(null);
   // const [editorValue, setEditorValue] = useState('');
   const [focused, setFocused] = useState(false);
 
   return (
     <ReactQuill
-      // ref={(instance) => {
-      //   quillRef.current = instance;
-      //   if (typeof ref === 'function') {
-      //     ref(instance);
-      //   } else if (ref) {
-      //     (ref as React.MutableRefObject<ReactQuill | null>).current = instance;
-      //   }
-      // }}
       ref={ref}
-      value={!value ? label : value}
+      value={value}
       onChange={(value) => onChange(value)}
       formats={['mention']}
       modules={{

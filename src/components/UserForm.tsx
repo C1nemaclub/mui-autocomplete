@@ -69,7 +69,6 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
   };
 
   const insertMentionToTipTap = () => {
-    console.log('hello');
     if (insertMention) {
       console.log("insertMention('Sam')");
 
@@ -283,7 +282,6 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
         <QuillMention
           value={form.values.name}
           onChange={(value) => form.setFieldValue('name', value)}
-          // label='Type here...'
           ref={quillRef}
         />
       </Grid> */}
@@ -299,7 +297,10 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
       <Grid item xs={12}>
         <Button
           variant='contained'
-          onClick={() => insertMentionToTipTap()}
+          onClick={() => {
+            insertMentionToTipTap();
+            addMention('Sam');
+          }}
           fullWidth>
           Add Mention
         </Button>
