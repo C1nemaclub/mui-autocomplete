@@ -37,9 +37,11 @@ export const FormContextProvider = ({
       name: '',
       description: 'Hello this is sam {{Sam.Sam}}',
       roles: ['User'],
-      formType: { id: 'd4fd-fd4sfd2', name: 'Form' },
+      // formType: { id: 'd4fd-fd4sfd2', name: 'Form' },
+      formType: null,
       age: '',
       option: null,
+      users: [{ value: '', label: '1' }],
     },
     onSubmit: (payload, { resetForm }) => {
       const reqPayload = {

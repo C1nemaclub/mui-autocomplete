@@ -34,6 +34,7 @@
     "slate": "^0.112.0",
     "slate-history": "^0.110.3",
     "slate-react": "^0.112.0",
+    "uuidv4": "^6.2.13",
     "yup": "^1.4.0"
   },
   "devDependencies": {

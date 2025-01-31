@@ -1,6 +1,11 @@
 import * as yup from 'yup';
 import { FormikEntity, Project } from './data.model';
 
+export const arrayOptionSchema = yup.object().shape({
+  value: yup.string().required('This field is required'),
+  label: yup.string().required('This field is required'),
+});
+
 export const validationSchema = yup.object().shape({
   projectType: yup
     .object()
@@ -49,6 +54,11 @@ export const validationSchema = yup.object().shape({
     then: () => yup.number().required('This field is required'),
     otherwise: () => yup.number(),
   }),
+  users: yup
+    .array()
+    .of(arrayOptionSchema)
+    .min(1)
+    .required('This field is required'),
 });
 
 export const data: Project[] = [

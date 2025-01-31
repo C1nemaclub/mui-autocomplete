@@ -1,10 +1,24 @@
-import { Button, Grid, TextField } from '@mui/material';
+import { Add, Delete, FormatItalicTwoTone } from '@mui/icons-material';
+import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
+import BookIcon from '@mui/icons-material/Book';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import TableRowsIcon from '@mui/icons-material/TableRows';
+import {
+  Autocomplete,
+  Button,
+  Grid,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { FormikProps } from 'formik';
 import React, { FC, useRef, useState } from 'react';
 import type ReactQuill from 'react-quill';
 import { FormikEntity, Project } from '../utils/data.model';
+import RadioGroupInput from './RadioGroupInput';
+import SelectGroupInputs from './SelectGroupInput';
 import TipTapEditor from './TipTapEditor';
-
 type UserForm = {
   form: FormikProps<FormikEntity>;
   initialValues?: FormikEntity;
@@ -76,8 +90,17 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
     }
   };
 
+  const formTypeIcon = {
+    Form: <BookIcon />,
+    Table: <TableRowsIcon />,
+    Dashboard: <DashboardIcon />,
+    Report: <AssignmentRoundedIcon />,
+    default: <></>,
+  };
+
   return (
     <>
+      <pre>{JSON.stringify(form.values.formType, null, 2)}</pre>
       {/* <Grid item xs={6}>
         <TextField
           name='name'
@@ -205,31 +228,70 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           isOptionEqualToValue={(option, value) => option === value}
         />
       </Grid> */}
-      {/* <Grid item xs={12}>
-        <Autocomplete
-          value={form.values.formType}
+      <Grid item xs={12}>
+        <Stack direction='row' alignItems='center' gap={1}>
+          <Autocomplete
+            value={form.values.formType}
+            options={[
+              { id: 'd4fd-fd4sfd2', name: 'Form' },
+              { id: 'sdcw45-4da1t7', name: 'Table' },
+              { id: '2d4f5-4d5f34', name: 'Dashboard' },
+              { id: '2d4f5-4d5f4', name: 'Report' },
+            ]}
+            isOptionEqualToValue={(option, value) => {
+              return option.id === value?.id;
+            }}
+            getOptionLabel={(option) => option.name}
+            getOptionDisabled={(option) => option.name === 'Dashboard'}
+            onChange={(_, value) => {
+              form.setFieldValue('formType', value);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name='formType'
+                label='Form Type'
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment:
+                    formTypeIcon[form.values.formType?.name] ||
+                    formTypeIcon.default,
+                }}
+              />
+            )}
+            renderOption={(props, option) => {
+              return (
+                <li {...props}>
+                  <Stack direction='row' gap={1} alignItems='center'>
+                    <FormatItalicTwoTone />
+                    <Typography>{option.name}</Typography>
+                  </Stack>
+                </li>
+              );
+            }}
+            fullWidth
+          />
+        </Stack>
+      </Grid>
+      <Grid item xs={12}>
+        <SelectGroupInputs
+          controlProps={{ fullWidth: true }}
           options={[
-            { id: 'd4fd-fd4sfd2', name: 'Form' },
-            { id: 'sdcw45-4da1t7', name: 'Table' },
-            { id: '2d4f5-4d5f34', name: 'Dashboard' },
-            { id: '2d4f5-4d5f4', name: 'Report' },
+            { code: 'd4fd-fd4sfd2', name: 'Form' },
+            { code: 'sdcw45-4da1t7', name: 'Table' },
+            { code: '2d4f5-4d5f34', name: 'Dashboard' },
+            { code: '2d4f5-4d5f4', name: 'Report' },
           ]}
-          isOptionEqualToValue={(option, value) => {
-            return option.id === value?.id;
-          }}
           getOptionLabel={(option) => option.name}
-          getOptionDisabled={(option) => option.name === 'Dashboard'}
+          value={form.values.formType}
           onChange={(_, value) => {
             form.setFieldValue('formType', value);
           }}
-          renderInput={(params) => (
-            <TextField {...params} name='formType' label='Form Type' />
-          )}
-          fullWidth
+          getOptionDisabled={(option) => option.name === 'Form'}
         />
-      </Grid> */}
+      </Grid>
 
-      {/* <Grid item xs={12}>
+      <Grid item xs={12}>
         <RadioGroupInput
           label='Form Type'
           name='formType'
@@ -259,7 +321,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
             },
           }}
         />
-      </Grid> */}
+      </Grid>
 
       {/* <Grid item xs={12}>
         <NumericInput form={form} />
@@ -293,7 +355,70 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           label='Description'
         />
       </Grid>
-      <pre>{JSON.stringify(form.values.description, null, 2)}</pre>
+      <Grid item xs={12}>
+        <Stack
+          direction='row'
+          gap={1}
+          justifyContent='space-between'
+          alignItems='center'>
+          <Typography>Users</Typography>
+          <IconButton
+            onClick={() => {
+              form.setFieldValue('users', [
+                ...form.values.users,
+                { value: '', label: Math.random() },
+              ]);
+            }}>
+            <Add />
+          </IconButton>
+        </Stack>
+        <Stack gap={1}>
+          {form.values.users.map((user, index) => {
+            return (
+              <Stack
+                direction={'row'}
+                gap={1}
+                key={user.label}
+                alignItems='start'>
+                <TextField
+                  name={`users.${index}`}
+                  value={user.value}
+                  key={user.label}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    form.setFieldValue(`users.${index}`, {
+                      value: e.target.value,
+                      label: user.label,
+                    });
+                  }}
+                  fullWidth
+                  error={!user.value}
+                  helperText={form.errors.users?.[index]?.value}
+                  onBlur={() => {
+                    form.setFieldTouched(`users.${index}`, true);
+                  }}
+                />
+                <IconButton
+                  sx={{ mt: 0.5 }}
+                  disabled={form.values.users.length === 1}>
+                  <Delete
+                    sx={{
+                      fontSize: '2rem',
+                    }}
+                    onClick={() => {
+                      const newUsers = form.values.users.filter(
+                        (_, i) => i !== index
+                      );
+                      form.setFieldValue('users', newUsers);
+                    }}
+                  />
+                </IconButton>
+              </Stack>
+            );
+          })}
+        </Stack>
+      </Grid>
+
       <Grid item xs={12}>
         <Button
           variant='contained'

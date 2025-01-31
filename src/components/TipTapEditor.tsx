@@ -6,9 +6,47 @@ import Document from '@tiptap/extension-document';
 import Mention from '@tiptap/extension-mention';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
-import { EditorContent, generateHTML, useEditor } from '@tiptap/react';
+import {
+  EditorContent,
+  generateHTML,
+  mergeAttributes,
+  Node,
+  useEditor,
+} from '@tiptap/react';
 import { format } from 'date-fns';
 import { useState, type Dispatch, type FC, type SetStateAction } from 'react';
+
+const IconNode = Node.create({
+  name: 'iconNode',
+  inline: true,
+  group: 'inline',
+  atom: true,
+  addAttributes() {
+    return {
+      iconType: {
+        default: 'defaultIcon',
+      },
+    };
+  },
+  parseHTML() {
+    return [
+      {
+        tag: 'icon-node',
+      },
+    ];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['icon-node', mergeAttributes(HTMLAttributes), 0];
+  },
+  addNodeView() {
+    return ({ node, getPos, editor }) => {
+      const dom = document.createElement('span');
+      dom.contentEditable = 'false';
+      dom.innerText = 'HELLOS';
+      return { dom };
+    };
+  },
+});
 
 interface TipTapEditorProps {
   value: string;
@@ -77,6 +115,7 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
 
   const editor = useEditor({
     extensions: [
+      IconNode,
       Text,
       Document,
       Paragraph,
@@ -110,6 +149,10 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
         // },
       }),
     ],
+    // iconComponents: {
+    //   defaultIcon: ImportContactsTwoTone,
+    //   customIcon: ImportContacts,
+    // },
     content: transformTextToHTML(value),
     onUpdate: ({ editor }) => {
       const textContent = editor.getText({
@@ -175,6 +218,19 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
   //   }
   // }, [value, editor]);
 
+  const insertIcon = (iconType) => {
+    if (editor) {
+      editor
+        .chain()
+        .focus()
+        .insertContent({
+          type: 'iconNode',
+          attrs: { iconType },
+        })
+        .run();
+    }
+  };
+
   if (!editor) return null;
 
   const getPlaceholderClass = () => {
@@ -209,7 +265,6 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
           {label}
         </Box>
       )}
-      <pre>{JSON.stringify({ html: editor.getHTML() }, null, 2)}</pre>
     </Box>
   );
 };
