@@ -18,6 +18,10 @@ const routes = [
     label: 'Stepper',
     value: '/stepper',
   },
+  {
+    label: 'Folders',
+    value: '/folders',
+  },
 ];
 
 const Navbar = () => {

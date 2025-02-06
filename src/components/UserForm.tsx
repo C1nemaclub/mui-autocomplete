@@ -355,24 +355,30 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           label='Description'
         />
       </Grid>
-      <Grid item xs={12}>
-        <Stack
-          direction='row'
-          gap={1}
-          justifyContent='space-between'
-          alignItems='center'>
-          <Typography>Users</Typography>
-          <IconButton
-            onClick={() => {
-              form.setFieldValue('users', [
-                ...form.values.users,
-                { value: '', label: Math.random() },
-              ]);
+      <Grid container item xs={12}>
+        <Grid item xs={11}>
+          <Stack direction='row' gap={1} alignItems='center' sx={{ mb: 1 }}>
+            <TextField />
+            <Typography
+              textAlign='left'
+              sx={{
+                mb: 1,
+              }}>
+              Users
+            </Typography>
+          </Stack>
+        </Grid>
+        <Grid item xs={1}>
+          <Typography
+            textAlign='left'
+            sx={{
+              mb: 1,
             }}>
-            <Add />
-          </IconButton>
-        </Stack>
-        <Stack gap={1}>
+            Checkbox
+          </Typography>
+        </Grid>
+
+        <Grid item xs={12}>
           {form.values.users.map((user, index) => {
             return (
               <Stack
@@ -416,7 +422,26 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
               </Stack>
             );
           })}
-        </Stack>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: 'flex',
+          }}>
+          <Button
+            variant='outlined'
+            onClick={() => {
+              form.setFieldValue('users', [
+                ...form.values.users,
+                { value: '', label: Math.random() },
+              ]);
+            }}
+            sx={{ my: 1, justifySelf: 'start' }}
+            startIcon={<Add />}>
+            Add Item
+          </Button>
+        </Grid>
       </Grid>
 
       <Grid item xs={12}>

@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
+import FolderTree from './components/FolderTree/FolderTree';
 import Form from './components/Form';
 import MyList from './components/MyList';
 import Navbar from './components/Navbar';
@@ -60,6 +61,14 @@ function App() {
           element={
             <>
               <CustomStepper />
+            </>
+          }
+        />
+        <Route
+          path='/folders'
+          element={
+            <>
+              <FolderTree />
             </>
           }
         />
