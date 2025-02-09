@@ -1,7 +1,8 @@
 import { Folder } from '@mui/icons-material';
 import { Box, Button, IconButton, Stack, Typography } from '@mui/material';
+import type { TreeViewItemReorderPosition } from '@mui/x-tree-view-pro/internals/plugins/useTreeViewItemsReordering';
 import { RichTreeViewPro } from '@mui/x-tree-view-pro/RichTreeViewPro';
-import { useTreeItem2Utils } from '@mui/x-tree-view/hooks';
+import { useTreeItem2Utils, useTreeViewApiRef } from '@mui/x-tree-view/hooks';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import {
   TreeItem2,
@@ -10,21 +11,22 @@ import {
 } from '@mui/x-tree-view/TreeItem2';
 import { TreeItem2LabelInput } from '@mui/x-tree-view/TreeItem2LabelInput';
 import {
+  useTreeItem2,
   UseTreeItem2LabelInputSlotOwnProps,
   UseTreeItem2LabelSlotOwnProps,
 } from '@mui/x-tree-view/useTreeItem2';
 import {
+  IconArrowRight,
   IconCheck,
   IconEdit,
   IconFolder,
+  IconFolderFilled,
   IconPlayerStop,
   IconTrash,
 } from '@tabler/icons-react';
 import React, { useEffect, useState } from 'react';
-
-interface TreeItemMeta extends TreeViewBaseItem {
-  creating?: boolean;
-}
+import { v4 as randomId } from 'uuid';
+import { extractItemFromTreeById, type TreeItemMeta } from './utils/functions';
 
 const ITEMS: TreeViewBaseItem<TreeItemMeta>[] = [
   {
@@ -107,9 +109,17 @@ function CustomLabel({
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}>
       <Stack direction='row' gap={1} alignItems='center'>
-        <IconFolder />
-        {children}
-        {/* {childrenCount !== null && childrenCount > 0 && ` (${childrenCount})`} */}
+        {selected ? <IconFolderFilled /> : <IconFolder />}
+        <Box
+          component='span'
+          sx={{
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            maxWidth: 200,
+          }}>
+          {children}
+        </Box>
       </Stack>
       {editable && hover && (
         <Stack direction='row'>
@@ -153,14 +163,6 @@ function CustomLabelInput(props: Omit<CustomLabelInputProps, 'ref'>) {
           color: '#fff',
         }}
       />
-      {/* <IconCheck
-        color='success'
-        size='small'
-        onClick={(event: React.MouseEvent) => {
-          handleSaveItemLabel(event, value);
-        }}>
-        <CheckIcon fontSize='small' />
-      </IconCheck> */}
       <IconButton
         color='success'
         size='small'
@@ -192,9 +194,11 @@ const CustomTreeItem2 = React.forwardRef(function CustomTreeItem2(
     children: props.children,
   });
 
-  // console.log(interactions);
-
   const { onClick, editingId, setEditingId, ...rest } = props;
+  const hook = useTreeItem2({ id: rest.id });
+  console.log(hook, 'hok');
+
+  // console.log(interactions);
 
   const handleContentDoubleClick: UseTreeItem2LabelSlotOwnProps['onDoubleClick'] =
     (event) => {
@@ -211,6 +215,7 @@ const CustomTreeItem2 = React.forwardRef(function CustomTreeItem2(
     event
   ) => {
     event.defaultMuiPrevented = true;
+    console.log(event.key);
   };
 
   const handleRemove = () => {
@@ -237,7 +242,10 @@ const CustomTreeItem2 = React.forwardRef(function CustomTreeItem2(
     <TreeItem2
       {...rest}
       ref={ref}
-      slots={{ label: CustomLabel, labelInput: CustomLabelInput }}
+      slots={{
+        label: CustomLabel,
+        labelInput: CustomLabelInput,
+      }}
       slotProps={{
         label: {
           onDoubleClick: handleContentDoubleClick,
@@ -261,15 +269,27 @@ const CustomTreeItem2 = React.forwardRef(function CustomTreeItem2(
   );
 });
 const FolderTree = () => {
-  const [initialItems, setInitialItems] =
-    useState<TreeViewBaseItem<TreeItemMeta>[]>(ITEMS);
+  const [initialItems, setInitialItems] = useState<
+    TreeViewBaseItem<TreeItemMeta>[]
+  >([
+    {
+      id: '1',
+      label: 'Main',
+    },
+    {
+      id: '2',
+      label: 'Secondary',
+    },
+  ]);
+  const apiRefTreeViewA = useTreeViewApiRef();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
   const addFolder = () => {
     setInitialItems([
       ...initialItems,
       {
-        id: `folder-${initialItems.length + 1}`,
+        id: randomId(),
         label: `Folder ${initialItems.length + 1}`,
         creating: true,
       },
@@ -278,13 +298,63 @@ const FolderTree = () => {
   };
 
   const handleRemove = (itemId: string) => {
-    // Fix, not searching recursively
-    setInitialItems(initialItems.filter((item) => item.id !== itemId));
+    const result = extractItemFromTreeById(itemId, initialItems);
+    setInitialItems(result.updatedTree);
+  };
+
+  const handleItemPositionChange = (params: {
+    itemId: string;
+    oldPosition: TreeViewItemReorderPosition;
+    newPosition: TreeViewItemReorderPosition;
+  }) => {
+    console.log('order');
+    // if (!params.newPosition.parentId) return;
+    // const result = extractItemFromTreeById(params.itemId, initialItems);
+    // const updatedFolders = addNewItemToTree(
+    //   params.newPosition.parentId,
+    //   result.updatedTree,
+    //   result.extractedItem!
+    // );
+    // setInitialItems(updatedFolders);
+    setTimeout(() => {
+      const newItemsTreeViewA = apiRefTreeViewA.current!.getItemTree();
+      setInitialItems(newItemsTreeViewA);
+    });
+  };
+
+  const handleLabelChange = (itemId: string, newLabel: string) => {};
+
+  // const selectedItem =
+  // selectedItemId && searchItem(selectedItemId, initialItems);
+
+  const got =
+    apiRefTreeViewA.current &&
+    selectedItemId &&
+    apiRefTreeViewA.current.getItem(selectedItemId);
+
+  const renderItems = (
+    selectedItem: TreeViewBaseItem<TreeItemMeta>,
+    depth = 0
+  ) => {
+    return (
+      <Stack
+        key={selectedItem.id}
+        alignItems='start'
+        sx={{
+          marginLeft: `${depth * 4}px`,
+        }}>
+        <Stack direction='row' gap={1} alignItems='center'>
+          <IconArrowRight />
+          <Typography>{selectedItem.label}</Typography>
+        </Stack>
+        {selectedItem.children &&
+          selectedItem.children.map((child) => renderItems(child, depth + 1))}
+      </Stack>
+    );
   };
 
   return (
     <Stack>
-      <pre>{JSON.stringify({ editingId }, null, 2)}</pre>
       <Stack
         direction='row'
         gap={1}
@@ -310,6 +380,7 @@ const FolderTree = () => {
           mt: 3,
         }}>
         <RichTreeViewPro
+          apiRef={apiRefTreeViewA}
           itemsReordering
           isItemEditable
           items={initialItems}
@@ -319,22 +390,13 @@ const FolderTree = () => {
             itemsReordering: true,
             labelEditing: true,
           }}
-          onItemPositionChange={(params) => {
-            console.log(params);
+          onSelectedItemsChange={(_, selectedItem) => {
+            setSelectedItemId(selectedItem);
           }}
-          onItemLabelChange={(x, y) => {
-            console.log(x, y);
-            // Fix, not searching recursively
-            setInitialItems(
-              initialItems.map((item) =>
-                item.id === x ? { ...item, label: y } : item
-              )
-            );
-          }}
+          onItemPositionChange={handleItemPositionChange}
+          onItemLabelChange={handleLabelChange}
           slots={{
             item: CustomTreeItem2,
-            // expandIcon: undefined,
-            // collapseIcon: undefined,
           }}
           sx={{
             height: 'fit-content',
@@ -344,10 +406,14 @@ const FolderTree = () => {
             width: '100%',
           }}
           slotProps={{
-            // collapseIcon: {
-            //   color: 'orange',
-            //   fontSize: '3rem',
-            // },
+            expandIcon: {
+              width: 30,
+              height: 30,
+            },
+            collapseIcon: {
+              width: 30,
+              height: 30,
+            },
             item: (props) => {
               return {
                 onClick: () => {
@@ -361,6 +427,10 @@ const FolderTree = () => {
           }}
         />
       </Box>
+      <Stack>
+        <Typography variant='h5'>Selected</Typography>
+        {got && <Stack alignItems='center'>{renderItems(got)}</Stack>}
+      </Stack>
     </Stack>
   );
 };

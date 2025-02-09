@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
+import { FolderCustom } from './components/FolderCustom/FolderCustom';
 import FolderTree from './components/FolderTree/FolderTree';
 import Form from './components/Form';
 import MyList from './components/MyList';
@@ -69,6 +70,14 @@ function App() {
           element={
             <>
               <FolderTree />
+            </>
+          }
+        />
+        <Route
+          path='/folder-custom'
+          element={
+            <>
+              <FolderCustom />
             </>
           }
         />

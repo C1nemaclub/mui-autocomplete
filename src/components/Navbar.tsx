@@ -22,6 +22,10 @@ const routes = [
     label: 'Folders',
     value: '/folders',
   },
+  {
+    label: 'Folder Custom',
+    value: '/folder-custom',
+  },
 ];
 
 const Navbar = () => {
