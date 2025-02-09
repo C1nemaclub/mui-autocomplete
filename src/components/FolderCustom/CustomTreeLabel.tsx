@@ -1,9 +1,8 @@
-import { Box, IconButton, styled, Typography } from '@mui/material';
+import { Box, IconButton, Stack, styled, Typography } from '@mui/material';
 import { TreeItem2Label } from '@mui/x-tree-view/TreeItem2';
 import {
-  IconFolder,
+  IconFolderFilled,
   IconFolderPlus,
-  IconFolderSymlink,
   IconPencilMinus,
 } from '@tabler/icons-react';
 import type React from 'react';
@@ -23,17 +22,17 @@ interface CustomLabelProps {
   onEdit?: (e: MouseEvent) => void;
   onAdd?: (e: MouseEvent) => void;
   childrenCount?: number;
+  selected?: boolean;
 }
 
 function CustomTreeLabel({
-  expandable,
   children,
   onEdit,
   onAdd,
   childrenCount,
+  selected,
   ...other
 }: CustomLabelProps) {
-  const FolderIcon = expandable ? IconFolderSymlink : IconFolder;
   return (
     <TreeItem2Label
       {...other}
@@ -44,10 +43,10 @@ function CustomTreeLabel({
         width: '100%',
       }}>
       <Box
-        component={FolderIcon}
+        component={IconFolderFilled}
         sx={{
           color: ({ palette }) =>
-            expandable ? palette.warning.main : palette.text.secondary,
+            selected ? palette.warning.main : palette.text.secondary,
           flexShrink: 0,
           marginRight: 1,
         }}
@@ -56,12 +55,16 @@ function CustomTreeLabel({
         {children}
         {childrenCount && childrenCount > 0 ? ` (${childrenCount})` : null}
       </StyledTreeItemLabelText>
-      <IconButton onClick={onEdit} sx={{ ml: 'auto' }}>
-        <IconPencilMinus />
-      </IconButton>
-      <IconButton onClick={onAdd}>
-        <IconFolderPlus />
-      </IconButton>
+      {selected && (
+        <Stack direction='row' sx={{ ml: 'auto' }}>
+          <IconButton onClick={onEdit} sx={{ ml: 'auto', p: 0 }}>
+            <IconPencilMinus />
+          </IconButton>
+          <IconButton onClick={onAdd} sx={{ p: 0, ml: 1 }}>
+            <IconFolderPlus />
+          </IconButton>
+        </Stack>
+      )}
     </TreeItem2Label>
   );
 }
