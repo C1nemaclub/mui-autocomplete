@@ -35,19 +35,12 @@ export const validationSchema = yup.object().shape({
     .required('This field is required'),
   roles: yup.array().of(yup.string()).min(1).required('This field is required'),
   name: yup.string().required('This field is required'),
-  // .matches(/^[a-zA-Z0-9]*$/, 'Only letters and numbers are allowed'),
   description: yup.string().min(1).trim().required('This field is required'),
   formType: yup.object().required('This field is required'),
-  // age: yup
-  //   .number()
-  //   .min(1, 'Age must be a number between 1 and 999')
-  //   .max(999, 'Age must be a number between 1 and 999')
-  //   .required('This field is required'),
   option: yup.object().shape({
     value: yup.string(),
     label: yup.string(),
   }),
-  // Age required when option value equals option-1
   age: yup.number().when('option', {
     is: (option: { label: string; value: string }) =>
       option?.value === 'option-1',

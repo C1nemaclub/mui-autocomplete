@@ -2,7 +2,7 @@ import { IconButton } from '@mui/material';
 import { TreeItem2LabelInput } from '@mui/x-tree-view/TreeItem2LabelInput';
 import type { UseTreeItem2LabelInputSlotOwnProps } from '@mui/x-tree-view/useTreeItem2';
 import { IconCheck, IconXboxXFilled } from '@tabler/icons-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface CustomLabelInputProps extends UseTreeItem2LabelInputSlotOwnProps {
   handleCancelItemLabelEditing: (event: React.SyntheticEvent) => void;
@@ -14,6 +14,13 @@ function CustomTreeLabelInput(props: Omit<CustomLabelInputProps, 'ref'>) {
   const { handleCancelItemLabelEditing, handleSaveItemLabel, value, ...other } =
     props;
 
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   return (
     <React.Fragment>
       <TreeItem2LabelInput
@@ -22,8 +29,10 @@ function CustomTreeLabelInput(props: Omit<CustomLabelInputProps, 'ref'>) {
         style={{
           color: '#fff',
         }}
+        ref={inputRef}
       />
       <IconButton
+        sx={{ p: 0 }}
         color='success'
         size='small'
         onClick={(event: React.MouseEvent) => {
@@ -32,6 +41,7 @@ function CustomTreeLabelInput(props: Omit<CustomLabelInputProps, 'ref'>) {
         <IconCheck />
       </IconButton>
       <IconButton
+        sx={{ p: 0 }}
         color='error'
         size='small'
         onClick={(e) => {

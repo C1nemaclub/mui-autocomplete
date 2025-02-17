@@ -26,6 +26,10 @@ const routes = [
     label: 'Folder Custom',
     value: '/folder-custom',
   },
+  {
+    label: 'JSON Builder',
+    value: '/json-builder',
+  },
 ];
 
 const Navbar = () => {

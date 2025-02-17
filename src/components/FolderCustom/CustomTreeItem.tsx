@@ -10,6 +10,7 @@ import { TreeItem2Provider } from '@mui/x-tree-view/TreeItem2Provider';
 import {
   useTreeItem2,
   type UseTreeItem2LabelInputSlotOwnProps,
+  type UseTreeItem2LabelSlotOwnProps,
 } from '@mui/x-tree-view/useTreeItem2';
 import clsx from 'clsx';
 import * as React from 'react';
@@ -73,8 +74,13 @@ export const CustomTreeItem = React.forwardRef(function CustomTreeItem(
   const handleInputBlur: UseTreeItem2LabelInputSlotOwnProps['onBlur'] = (
     event
   ) => {
-    event.defaultMuiPrevented = true;
+    // event.defaultMuiPrevented = true;
   };
+
+  const handleContentDoubleClick: UseTreeItem2LabelSlotOwnProps['onDoubleClick'] =
+    (event) => {
+      event.defaultMuiPrevented = true;
+    };
 
   const newEditing = beingCreatedItemId === itemId;
 
@@ -104,17 +110,15 @@ export const CustomTreeItem = React.forwardRef(function CustomTreeItem(
             <CustomTreeLabelInput
               {...getLabelInputProps()}
               handleSaveItemLabel={(e, label) => {
-                setBeingCreatedItemId(null);
                 console.log('saving');
                 interactions.handleSaveItemLabel(e, label);
-                // handleLabelSaveControlled(itemId, label);
+                setBeingCreatedItemId(null);
               }}
               handleCancelItemLabelEditing={(...props) => {
                 console.log('here');
                 interactions.handleCancelItemLabelEditing(...props);
                 setBeingCreatedItemId(null);
               }}
-              onBlur={handleInputBlur} // to prevent the input from closing
             />
           ) : (
             <CustomTreeLabel
@@ -124,6 +128,7 @@ export const CustomTreeItem = React.forwardRef(function CustomTreeItem(
                 onAdd: (e: React.MouseEvent) => onAdd(e, itemId),
                 childrenCount: childrenCount,
                 selected: status.selected,
+                onDoubleClick: handleContentDoubleClick,
               })}
             />
           )}

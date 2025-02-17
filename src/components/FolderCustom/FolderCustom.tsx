@@ -2,7 +2,7 @@ import { Box, Stack } from '@mui/material';
 import { RichTreeViewPro } from '@mui/x-tree-view-pro/RichTreeViewPro';
 import { useTreeViewApiRef } from '@mui/x-tree-view/hooks';
 import type { TreeViewBaseItem } from '@mui/x-tree-view/models';
-import { useState, type MouseEvent } from 'react';
+import React, { useEffect, useState, type MouseEvent } from 'react';
 import { v4 as randomId } from 'uuid';
 import { addNewItemToTree } from '../FolderTree/utils/functions';
 import { CustomTreeItem, type CustomTreeItemProps } from './CustomTreeItem';
@@ -16,6 +16,8 @@ export const FolderCustom = () => {
   const [beingCreatedItemId, setBeingCreatedItemId] = useState<string | null>(
     null
   );
+  const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined);
+  const parentRef = React.useRef<HTMLDivElement | null>(null);
 
   const createUnderItemRecursive = (e: MouseEvent, itemId: string) => {
     const newItem: CustomItem = {
@@ -38,26 +40,32 @@ export const FolderCustom = () => {
     });
   };
 
+  useEffect(() => {
+    if (parentRef.current) {
+      setMaxHeight(parentRef.current.clientHeight);
+    }
+  }, []);
+
   return (
     <Stack
       sx={{
         width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
         mt: 3,
-      }}>
+        height: '90vh',
+      }}
+      ref={parentRef}>
       <Box
         sx={{
-          minHeight: 352,
+          minHeight: 0,
           minWidth: 300,
           display: 'flex',
           width: 350,
-          alignItems: 'center',
+          alignItems: 'start',
           justifyContent: 'start',
-          height: 1000,
           mt: 3,
           overflowY: 'auto',
-          maxHeight: '100%',
+          flexGrow: 1,
+          maxHeight: maxHeight,
         }}>
         <RichTreeViewPro
           apiRef={apiRef}
@@ -79,6 +87,7 @@ export const FolderCustom = () => {
               });
             };
             setItems(updateItem(items));
+            setBeingCreatedItemId(null);
           }}
           defaultExpandedItems={['pickers']}
           defaultSelectedItems={'pickers'}

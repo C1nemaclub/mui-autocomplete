@@ -100,8 +100,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
 
   return (
     <>
-      <pre>{JSON.stringify(form.values.formType, null, 2)}</pre>
-      {/* <Grid item xs={6}>
+      <Grid item xs={6}>
         <TextField
           name='name'
           label='Name'
@@ -109,7 +108,8 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           value={form.values.name}
           fullWidth
         />
-      </Grid> */}
+      </Grid>
+      <pre>{JSON.stringify({ x: form.values.name }, null, 2)}</pre>
       <Grid item xs={6}>
         <TextField
           name='description'
@@ -119,7 +119,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           fullWidth
         />
       </Grid>
-      {/* <Grid item xs={12}>
+      <Grid item xs={12}>
         <Autocomplete
           fullWidth
           options={data}
@@ -137,8 +137,8 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
             option.project_type_id === value.project_type_id
           }
         />
-      </Grid> */}
-      {/* 
+      </Grid>
+
       <Grid item xs={6}>
         <Autocomplete
           fullWidth
@@ -157,8 +157,8 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
             option.section_selector === value.section_selector
           }
         />
-      </Grid> */}
-      {/* <Grid item xs={6}>
+      </Grid>
+      <Grid item xs={6}>
         <Autocomplete
           fullWidth
           options={fieldOptions || []}
@@ -175,8 +175,8 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
             option.field_selector === value.field_selector
           }
         />
-      </Grid> */}
-      {/* <Grid item xs={12}>
+      </Grid>
+      <Grid item xs={12}>
         <Autocomplete
           multiple
           options={[]} // No predefined options
@@ -211,8 +211,8 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           )}
           fullWidth
         />
-      </Grid> */}
-      {/* <Grid item xs={12}>
+      </Grid>
+      <Grid item xs={12}>
         <Autocomplete
           disabled={isEdit}
           multiple
@@ -227,7 +227,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           }}
           isOptionEqualToValue={(option, value) => option === value}
         />
-      </Grid> */}
+      </Grid>
       <Grid item xs={12}>
         <Stack direction='row' alignItems='center' gap={1}>
           <Autocomplete

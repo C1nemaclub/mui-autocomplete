@@ -23,6 +23,7 @@ interface CustomLabelProps {
   onAdd?: (e: MouseEvent) => void;
   childrenCount?: number;
   selected?: boolean;
+  onDoubleClick?: (e: MouseEvent) => void;
 }
 
 function CustomTreeLabel({
