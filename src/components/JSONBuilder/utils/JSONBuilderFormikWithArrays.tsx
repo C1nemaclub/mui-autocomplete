@@ -1,3 +1,4 @@
+import { Stack } from '@mui/material';
 import type { FormikProps } from 'formik';
 import React, { useState } from 'react';
 
@@ -259,12 +260,17 @@ const JSONBuilderFormikWithArrays: React.FC<
 
   return (
     <div>
-      <h1>JSON Builder</h1>
-      <div>
-        <NestedKeyAdder parentPath='' onAddKey={addKey} />
-      </div>
-      <div>{renderJson(json)}</div>
-      <pre>{JSON.stringify(json, null, 2)}</pre>
+      <h1>JSON Buildexxr</h1>
+      <Stack
+        sx={{
+          border: '1px solid red',
+          bgcolor: 'red',
+        }}>
+        <div>
+          <NestedKeyAdder parentPath='' onAddKey={addKey} />
+        </div>
+        <div>{renderJson(json)}</div>
+      </Stack>
     </div>
   );
 };

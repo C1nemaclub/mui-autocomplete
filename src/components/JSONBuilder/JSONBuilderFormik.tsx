@@ -1,3 +1,13 @@
+import {
+  Box,
+  Button,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import Grid2 from '@mui/material/Unstable_Grid2';
+import { IconTrash } from '@tabler/icons-react';
 import type { FormikProps } from 'formik';
 import React, { useState } from 'react';
 
@@ -109,66 +119,124 @@ const JSONBuilderFormik: React.FC<JSONBuilderFormikProps> = ({
 
   // Render the JSON object
   const renderJson = (obj: JsonObject, parentPath = ''): JSX.Element[] => {
+    const nestingLevel = parentPath.split('.').length;
     return Object.entries(obj).map(
       ([key, { value, dataType, availableValues }]) => {
         const fullPath = parentPath ? `${parentPath}.${key}` : key;
         return (
-          <div key={fullPath} style={{ marginLeft: parentPath ? '20px' : '0' }}>
-            <strong>{key}:</strong>
-            {dataType === 'string' && (
-              <>
-                {/* <input
-                  type='text'
-                  value={value as string}
-                  onChange={(e) => updateValue(fullPath, e.target.value)}
-                /> */}
-                {availableValues && availableValues.length > 0 && (
-                  <select
+          <Grid2 xs={12} container>
+            <Grid2 xs={12}>
+              <Typography sx={{ textAlign: 'left' }}>{key}:</Typography>
+              {dataType === 'object' && (
+                <NestedKeyAdder
+                  parentPath={fullPath}
+                  onAddKey={addKey}
+                  isEditingByDefault
+                />
+              )}
+            </Grid2>
+            <Grid2 xs={10}>
+              {dataType === 'string' && (
+                <>
+                  <TextField
+                    size='small'
+                    variant='outlined'
+                    type='text'
                     value={value as string}
-                    onChange={(e) => updateValue(fullPath, e.target.value)}>
-                    {availableValues.map(({ value, label }) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
+                    onChange={(e) => updateValue(fullPath, e.target.value)}
+                    fullWidth
+                  />
+                  {/* {availableValues && availableValues.length > 0 && (
+                  <select
+                  value={value as string}
+                  onChange={(e) => updateValue(fullPath, e.target.value)}>
+                  {availableValues.map(({ value, label }) => (
+                    <option key={value} value={value}>
+                    {label}
+                    </option>
                     ))}
-                  </select>
-                )}
-              </>
-            )}
-            {dataType === 'boolean' && (
-              <input
-                type='checkbox'
-                checked={value as boolean}
-                onChange={(e) => updateValue(fullPath, e.target.checked)}
-              />
-            )}
-            {dataType === 'object' && (
-              <>
-                <NestedKeyAdder parentPath={fullPath} onAddKey={addKey} />
-                {renderJson(value as JsonObject, fullPath)}
-              </>
-            )}
-            <button onClick={() => removeKey(fullPath)}>Remove</button>
-          </div>
+                    </select>
+                    )} */}
+                </>
+              )}
+              {dataType === 'boolean' && (
+                <input
+                  type='checkbox'
+                  checked={value as boolean}
+                  onChange={(e) => updateValue(fullPath, e.target.checked)}
+                />
+              )}
+              {dataType === 'object' && (
+                <>
+                  <Grid2
+                    container
+                    xs={12}
+                    sx={{
+                      ml: nestingLevel * 2,
+                    }}>
+                    {renderJson(value as JsonObject, fullPath)}
+                  </Grid2>
+                  <Box
+                    sx={{
+                      ml: nestingLevel * 2,
+                    }}>
+                    {/* <NestedKeyAdder
+                      parentPath={fullPath}
+                      onAddKey={addKey}
+                      isEditingByDefault
+                    /> */}
+                  </Box>
+                </>
+              )}
+            </Grid2>
+            <Grid2 xs={2}>
+              <IconButton
+                onClick={() => removeKey(fullPath)}
+                sx={{ color: 'error.main' }}>
+                <IconTrash />
+              </IconButton>
+            </Grid2>
+          </Grid2>
         );
       }
     );
   };
 
   return (
-    <div>
+    <Stack
+      sx={{
+        mt: 1,
+        borderRadius: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+      }}>
       <h1>JSON Builder</h1>
-      <div>
-        <NestedKeyAdder parentPath='' onAddKey={addKey} />
-      </div>
-      <div>{renderJson(json)}</div>
-      <button
-        type='button'
-        onClick={() => form.setFieldValue(name, {})}
-        style={{ marginTop: '1rem' }}>
-        reset
-      </button>
-    </div>
+      <Stack
+        alignItems='start'
+        sx={{
+          width: '100%',
+          maxWidth: 'sm',
+        }}>
+        <Stack mb={1}>
+          <NestedKeyAdder
+            parentPath=''
+            onAddKey={addKey}
+            isEditingByDefault={false}
+          />
+        </Stack>
+        <Grid2 container columns={12} sx={{}}>
+          {renderJson(json)}
+        </Grid2>
+        <Button
+          size='small'
+          variant='contained'
+          onClick={() => form.setFieldValue(name, {})}
+          style={{ marginTop: '1rem' }}>
+          reset
+        </Button>
+      </Stack>
+    </Stack>
   );
 };
 
@@ -176,8 +244,9 @@ const JSONBuilderFormik: React.FC<JSONBuilderFormikProps> = ({
 const NestedKeyAdder: React.FC<{
   parentPath: string;
   onAddKey: (parentPath: string, newKey: string, newKeyType: DataType) => void;
-}> = ({ parentPath, onAddKey }) => {
-  const [isAdding, setIsAdding] = useState<boolean>(false);
+  isEditingByDefault: boolean;
+}> = ({ parentPath, onAddKey, isEditingByDefault }) => {
+  const [isAdding, setIsAdding] = useState<boolean>(isEditingByDefault);
   const [newKey, setNewKey] = useState<string>('');
   const [newKeyType, setNewKeyType] = useState<DataType>('string');
 
@@ -190,12 +259,19 @@ const NestedKeyAdder: React.FC<{
   };
 
   return (
-    <div>
+    <Stack gap={1} direction='row'>
       {!isAdding ? (
-        <button onClick={() => setIsAdding(true)}>Add Key</button>
+        <Button
+          variant='contained'
+          size='small'
+          onClick={() => setIsAdding(true)}>
+          Add Key
+        </Button>
       ) : (
-        <div>
-          <input
+        <Stack gap={1} direction='row'>
+          <TextField
+            size='small'
+            variant='outlined'
             type='text'
             placeholder='Enter key'
             value={newKey}
@@ -208,11 +284,13 @@ const NestedKeyAdder: React.FC<{
             <option value='boolean'>Boolean</option>
             <option value='object'>Object</option>
           </select>
-          <button onClick={handleApply}>Apply</button>
+          <Button size='small' variant='contained' onClick={handleApply}>
+            Apply
+          </Button>
           {/* <button onClick={() => setIsAdding(false)}>Cancel</button> */}
-        </div>
+        </Stack>
       )}
-    </div>
+    </Stack>
   );
 };
 

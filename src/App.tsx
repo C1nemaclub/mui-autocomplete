@@ -53,7 +53,7 @@ function App() {
     // </>
     <Router>
       <Navbar />
-      <pre>{JSON.stringify({ v: testForm.values }, null, 2)}</pre>
+      {/* <pre>{JSON.stringify({ v: testForm.values }, null, 2)}</pre> */}
       <Routes>
         <Route path='/:queueId' element={FormElement} />
         <Route path='/' element={FormElement} />
