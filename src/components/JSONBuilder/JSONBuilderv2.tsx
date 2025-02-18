@@ -1,55 +1,12 @@
-import { Stack } from '@mui/material';
-import { useState } from 'react';
-import type { DataType, JsonObject } from './utils/functions';
+import React, { useState } from 'react';
 
-const initialJson = {
-  created: '',
-  active: true,
-  quantity: 0,
-  user: {
-    personalInfo: {
-      name: '',
-      age: 0,
-    },
-    address: {
-      city: '',
-      other: {
-        partner: {
-          name: 'hello',
-        },
-        type: 'idk',
-      },
-    },
-  },
-};
+type JsonValue = string | boolean | JsonObject;
+type JsonObject = { [key: string]: { value: JsonValue; dataType: DataType } };
 
-const initialObject: JsonObject = {
-  name: {
-    value: '',
-    dataType: 'string',
-  },
-  lastName: {
-    value: '',
-    dataType: 'string',
-  },
-  isAlive: {
-    value: true,
-    dataType: 'boolean',
-  },
-  address: {
-    value: {
-      city: {
-        value: 'Medellin',
-        dataType: 'string',
-      },
-    },
-    dataType: 'object',
-  },
-};
+type DataType = 'string' | 'boolean' | 'object';
 
-const JSONBuilder = () => {
+const JSONBuilderv2: React.FC = () => {
   const [json, setJson] = useState<JsonObject>({});
-  const canEditKeys = true;
 
   // Add a new key to the JSON object
   const addKey = (parentPath: string, newKey: string, newKeyType: DataType) => {
@@ -156,85 +113,70 @@ const JSONBuilder = () => {
           )}
           {dataType === 'object' && (
             <>
-              <div>
-                <NestedKeyAdder
-                  parentPath={fullPath}
-                  onAddKey={addKey}
-                  canEditKeys={canEditKeys}
-                />
-              </div>
+              <NestedKeyAdder parentPath={fullPath} onAddKey={addKey} />
               {renderJson(value as JsonObject, fullPath)}
             </>
           )}
-          {canEditKeys && (
-            <button onClick={() => removeKey(fullPath)}>Remove</button>
-          )}
+          <button onClick={() => removeKey(fullPath)}>Remove</button>
         </div>
       );
     });
   };
 
   return (
-    <Stack
-      sx={{
-        mt: 1,
-        borderRadius: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
+    <div>
+      <h1>JSON Builder</h1>
       <div>
-        <h1>JSON Builder</h1>
-        <div>
-          <NestedKeyAdder
-            canEditKeys={canEditKeys}
-            parentPath=''
-            onAddKey={addKey}
-          />
-        </div>
-        <div>{renderJson(json)}</div>
-        <pre>{JSON.stringify(json, null, 2)}</pre>
+        <NestedKeyAdder parentPath='' onAddKey={addKey} />
       </div>
-    </Stack>
+      <div>{renderJson(json)}</div>
+      <pre>{JSON.stringify(json, null, 2)}</pre>
+    </div>
   );
 };
 
 // Component for adding nested keys
 const NestedKeyAdder: React.FC<{
   parentPath: string;
-  canEditKeys: boolean;
   onAddKey: (parentPath: string, newKey: string, newKeyType: DataType) => void;
-}> = ({ parentPath, onAddKey, canEditKeys }) => {
+}> = ({ parentPath, onAddKey }) => {
+  const [isAdding, setIsAdding] = useState<boolean>(false);
   const [newKey, setNewKey] = useState<string>('');
   const [newKeyType, setNewKeyType] = useState<DataType>('string');
-  console.log(canEditKeys, 'he');
 
-  if (!canEditKeys) return null;
+  const handleApply = () => {
+    if (!newKey) return;
+    onAddKey(parentPath, newKey, newKeyType);
+    setIsAdding(false);
+    setNewKey('');
+    setNewKeyType('string');
+  };
 
   return (
     <div>
-      <input
-        type='text'
-        placeholder='Enter key'
-        value={newKey}
-        onChange={(e) => setNewKey(e.target.value)}
-      />
-      <select
-        value={newKeyType}
-        onChange={(e) => setNewKeyType(e.target.value as DataType)}>
-        <option value='string'>String</option>
-        <option value='boolean'>Boolean</option>
-        <option value='object'>Object</option>
-      </select>
-      <button
-        onClick={() => {
-          onAddKey(parentPath, newKey, newKeyType);
-          setNewKey('');
-          setNewKeyType('string');
-        }}>
-        Add Key
-      </button>
+      {!isAdding ? (
+        <button onClick={() => setIsAdding(true)}>Add Key</button>
+      ) : (
+        <div>
+          <input
+            type='text'
+            placeholder='Enter key'
+            value={newKey}
+            onChange={(e) => setNewKey(e.target.value)}
+          />
+          <select
+            value={newKeyType}
+            onChange={(e) => setNewKeyType(e.target.value as DataType)}>
+            <option value='string'>String</option>
+            <option value='boolean'>Boolean</option>
+            <option value='object'>Object</option>
+          </select>
+          <button onClick={handleApply}>Apply</button>
+          <button onClick={() => setIsAdding(false)}>Cancel</button>
+        </div>
+      )}
     </div>
   );
 };
 
-export default JSONBuilder;
+export default JSONBuilderv2;

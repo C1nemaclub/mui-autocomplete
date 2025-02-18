@@ -83,3 +83,58 @@ personSchema.validate({
 //     bs: 'harness real-time e-markets',
 //   },
 // };
+
+export type JsonValue = string | boolean | JsonObject;
+export type JsonObject = {
+  [key: string]: { value: JsonValue; dataType: DataType };
+};
+export type DataType = 'string' | 'boolean' | 'object';
+
+const obj = {
+  data: {
+    name: {
+      value: 'santiago',
+      dataType: 'string',
+    },
+    lastname: {
+      value: 'velasquez',
+      dataType: 'string',
+    },
+    isactive: {
+      value: true,
+      dataType: 'boolean',
+    },
+    address: {
+      value: {
+        city: {
+          value: 'medellin',
+          dataType: 'string',
+        },
+      },
+      dataType: 'object',
+    },
+  },
+};
+
+export const parseObjToJson = (givenObj: Record<string, any>) => {
+  const data = givenObj.data satisfies JsonObject;
+
+  const parse = (innerObj: JsonObject) => {
+    const result: Record<string, any> = {};
+    for (const key in innerObj) {
+      const value = innerObj[key].value;
+      if (innerObj[key].dataType === 'object') {
+        result[key] = parse(value as JsonObject); // Recursively process nested objects
+      } else {
+        result[key] = value;
+      }
+    }
+    return result;
+  };
+
+  const parsedObj = parse(data);
+  console.log(parsedObj);
+  return parsedObj;
+};
+
+parseObjToJson(obj);
