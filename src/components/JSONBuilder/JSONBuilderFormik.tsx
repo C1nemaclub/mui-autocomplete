@@ -15,16 +15,33 @@ type AvailableValues = {
   value: string;
   label: string;
 };
+
 type JsonValue = string | boolean | JsonObject;
-type JsonObject = {
-  [key: string]: {
-    value: JsonValue;
-    dataType: DataType;
-    availableValues?: AvailableValues[];
-  };
+
+type StringValue = {
+  value: string;
+  dataType: 'string';
+  availableValues?: AvailableValues[];
 };
 
-type DataType = 'string' | 'boolean' | 'object';
+type BooleanValue = {
+  value: boolean;
+  dataType: 'boolean';
+  availableValues?: AvailableValues[];
+};
+
+type ObjectValue = {
+  value: JsonObject;
+  dataType: 'object';
+  availableValues?: AvailableValues[];
+};
+
+type FinalValue = StringValue | BooleanValue | ObjectValue;
+type DataType = FinalValue['dataType'];
+
+type JsonObject = {
+  [key: string]: FinalValue;
+};
 
 interface JSONBuilderFormikProps {
   form: FormikProps<any>;
@@ -60,16 +77,16 @@ const JSONBuilderFormik: React.FC<JSONBuilderFormikProps> = ({
       value:
         newKeyType === 'string' ? '' : newKeyType === 'boolean' ? false : {},
       dataType: newKeyType,
-      availableValues:
-        newKeyType === 'boolean'
-          ? undefined
-          : newKeyType === 'object'
-          ? undefined
-          : [
-              { value: 'value1', label: 'Value 1' },
-              { value: 'value2', label: 'Value 2' },
-            ],
-    };
+      // availableValues:
+      //   newKeyType === 'boolean'
+      //     ? undefined
+      //     : newKeyType === 'object'
+      //     ? undefined
+      //     : [
+      //         { value: 'value1', label: 'Value 1' },
+      //         { value: 'value2', label: 'Value 2' },
+      //       ],
+    } as FinalValue;
 
     // Update Formik's state
     form.setFieldValue(name, updatedJson);
@@ -120,86 +137,73 @@ const JSONBuilderFormik: React.FC<JSONBuilderFormikProps> = ({
   // Render the JSON object
   const renderJson = (obj: JsonObject, parentPath = ''): JSX.Element[] => {
     const nestingLevel = parentPath.split('.').length;
-    return Object.entries(obj).map(
-      ([key, { value, dataType, availableValues }]) => {
-        const fullPath = parentPath ? `${parentPath}.${key}` : key;
-        return (
-          <Grid2 xs={12} container>
-            <Grid2 xs={12}>
-              <Typography sx={{ textAlign: 'left' }}>{key}:</Typography>
-              {dataType === 'object' && (
-                <NestedKeyAdder
-                  parentPath={fullPath}
-                  onAddKey={addKey}
-                  isEditingByDefault
+    return Object.entries(obj).map(([key, { value, dataType }]) => {
+      const fullPath = parentPath ? `${parentPath}.${key}` : key;
+      return (
+        <Grid2 xs={12} container>
+          <Grid2 xs={12}>
+            <Typography sx={{ textAlign: 'left' }}>{key}:</Typography>
+            {dataType === 'object' && (
+              <NestedKeyAdder
+                parentPath={fullPath}
+                onAddKey={addKey}
+                isEditingByDefault
+              />
+            )}
+          </Grid2>
+          <Grid2 xs={10}>
+            {dataType === 'string' && (
+              <>
+                <TextField
+                  size='small'
+                  variant='outlined'
+                  type='text'
+                  value={value}
+                  onChange={(e) => updateValue(fullPath, e.target.value)}
+                  fullWidth
                 />
-              )}
-            </Grid2>
-            <Grid2 xs={10}>
-              {dataType === 'string' && (
-                <>
-                  <TextField
-                    size='small'
-                    variant='outlined'
-                    type='text'
-                    value={value as string}
-                    onChange={(e) => updateValue(fullPath, e.target.value)}
-                    fullWidth
-                  />
-                  {/* {availableValues && availableValues.length > 0 && (
-                  <select
-                  value={value as string}
-                  onChange={(e) => updateValue(fullPath, e.target.value)}>
-                  {availableValues.map(({ value, label }) => (
-                    <option key={value} value={value}>
-                    {label}
-                    </option>
-                    ))}
-                    </select>
-                    )} */}
-                </>
-              )}
-              {dataType === 'boolean' && (
-                <input
-                  type='checkbox'
-                  checked={value as boolean}
-                  onChange={(e) => updateValue(fullPath, e.target.checked)}
-                />
-              )}
-              {dataType === 'object' && (
-                <>
-                  <Grid2
-                    container
-                    xs={12}
-                    sx={{
-                      ml: nestingLevel * 2,
-                    }}>
-                    {renderJson(value as JsonObject, fullPath)}
-                  </Grid2>
-                  <Box
-                    sx={{
-                      ml: nestingLevel * 2,
-                    }}>
-                    {/* <NestedKeyAdder
+              </>
+            )}
+            {dataType === 'boolean' && (
+              <input
+                type='checkbox'
+                checked={value}
+                onChange={(e) => updateValue(fullPath, e.target.checked)}
+              />
+            )}
+            {dataType === 'object' && (
+              <>
+                <Grid2
+                  container
+                  xs={12}
+                  sx={{
+                    ml: nestingLevel * 2,
+                  }}>
+                  {renderJson(value, fullPath)}
+                </Grid2>
+                <Box
+                  sx={{
+                    ml: nestingLevel * 2,
+                  }}>
+                  {/* <NestedKeyAdder
                       parentPath={fullPath}
                       onAddKey={addKey}
                       isEditingByDefault
                     /> */}
-                  </Box>
-                </>
-              )}
-            </Grid2>
-            <Grid2 xs={2}>
-              <IconButton
-                onClick={() => removeKey(fullPath)}
-                sx={{ color: 'error.main' }}>
-                <IconTrash />
-              </IconButton>
-            </Grid2>
+                </Box>
+              </>
+            )}
           </Grid2>
-        );
-      }
-    );
+          <Grid2 xs={2}>
+            <IconButton
+              onClick={() => removeKey(fullPath)}
+              sx={{ color: 'error.main' }}>
+              <IconTrash />
+            </IconButton>
+          </Grid2>
+        </Grid2>
+      );
+    });
   };
 
   return (
