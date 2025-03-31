@@ -70,7 +70,7 @@
   border: 1px solid var(--primary-color);
 }
 
-.tiptap.placeholder {
+/* .tiptap.placeholder {
   transition: 0.2s;
   position: absolute;
   top: 50%;
@@ -79,7 +79,7 @@
   background-color: #121212;
   padding: 0 10px;
   font-size: medium;
-  pointer-events: none; /* Ensures the label doesn't block clicks on the editor */
+  pointer-events: none;
 }
 
 .tiptap.placeholder.focused,
@@ -102,4 +102,4 @@
   transform: translate(15%, -50%);
   color: var(--primary-color);
   font-size: small;
-}
+} */

@@ -30,6 +30,10 @@ const routes = [
     label: 'JSON Builder',
     value: '/json-builder',
   },
+  {
+    label: 'Custom Component',
+    value: '/custom-component',
+  },
 ];
 
 const Navbar = () => {

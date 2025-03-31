@@ -13,8 +13,16 @@ import {
   Node,
   useEditor,
 } from '@tiptap/react';
+import clsx from 'clsx';
 import { format } from 'date-fns';
-import { useState, type Dispatch, type FC, type SetStateAction } from 'react';
+import {
+  useEffect,
+  useState,
+  type Dispatch,
+  type FC,
+  type SetStateAction,
+} from 'react';
+import TipTapEditorLabel from './TipTapEditorLabel';
 
 const IconNode = Node.create({
   name: 'iconNode',
@@ -163,11 +171,17 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
         },
       });
       // onChange(editor.getHTML());
-      onChange(textContent);
+      const numbersRegex = /^\d*$/;
+      if (numbersRegex.test(textContent)) {
+        onChange(textContent);
+      } else {
+        editor.commands.setContent(transformTextToHTML(value));
+      }
     },
     onFocus: () => {
       setMentionHandler(() => addMention);
     },
+    onCreate: (c) => {},
   });
 
   const addDate = (date: string) => {
@@ -175,11 +189,22 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
     editor.chain().focus().insertContent(date).run();
   };
 
+  const clearEditor = () => {
+    if (!editor) return;
+    editor.chain().clearContent().run();
+    onChange('');
+  };
+
+  useEffect(() => {
+    console.log('alue', value);
+  }, [value]);
+
   const renderDateMarkup = () => {
     return (
       <>
         <IconButton
-          onClick={() => setDatePickerOpen((prev) => !prev)}
+          // onClick={() => setDatePickerOpen((prev) => !prev)}
+          onClick={() => clearEditor()}
           sx={{
             position: 'absolute',
             right: 10,
@@ -233,19 +258,6 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
 
   if (!editor) return null;
 
-  const getPlaceholderClass = () => {
-    let classes = 'tiptap placeholder';
-    if (editor.isEmpty) {
-      classes = classes.concat(' empty');
-    } else {
-      classes = classes.concat(' has-value');
-    }
-    if (editor.isFocused) {
-      classes = classes.concat(' focused');
-    }
-    return classes;
-  };
-
   return (
     <Box
       position={'relative'}
@@ -255,16 +267,21 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
       <EditorContent editor={editor} className='editor-content' />
       {type === 'date' && renderDateMarkup()}
       {label && (
-        <Box
+        <TipTapEditorLabel
           sx={{
             color: '#a1a1a1',
             pointerEvents: 'none',
             fontWeight: 500,
           }}
-          className={getPlaceholderClass()}>
+          className={clsx({
+            empty: editor.isEmpty,
+            'has-value': !editor.isEmpty,
+            focused: editor.isFocused,
+          })}>
           {label}
-        </Box>
+        </TipTapEditorLabel>
       )}
+      <Box />
     </Box>
   );
 };

@@ -16,8 +16,6 @@ type AvailableValues = {
   label: string;
 };
 
-type JsonValue = string | boolean | JsonObject;
-
 type StringValue = {
   value: string;
   dataType: 'string';
@@ -37,6 +35,7 @@ type ObjectValue = {
 };
 
 type FinalValue = StringValue | BooleanValue | ObjectValue;
+type JsonValue = FinalValue['value'];
 type DataType = FinalValue['dataType'];
 
 type JsonObject = {
@@ -52,7 +51,7 @@ const JSONBuilderFormik: React.FC<JSONBuilderFormikProps> = ({
   form,
   name,
 }) => {
-  const json = form.values[name] || {};
+  const json: JsonObject = form.values[name] || {};
 
   // Add a new key to the JSON object
   const addKey = (parentPath: string, newKey: string, newKeyType: DataType) => {
@@ -67,7 +66,7 @@ const JSONBuilderFormik: React.FC<JSONBuilderFormikProps> = ({
       const pathParts = parentPath.split('.');
       for (const part of pathParts) {
         if (target[part].dataType === 'object') {
-          target = target[part].value as JsonObject;
+          target = target[part].value;
         }
       }
     }
@@ -77,15 +76,15 @@ const JSONBuilderFormik: React.FC<JSONBuilderFormikProps> = ({
       value:
         newKeyType === 'string' ? '' : newKeyType === 'boolean' ? false : {},
       dataType: newKeyType,
-      // availableValues:
-      //   newKeyType === 'boolean'
-      //     ? undefined
-      //     : newKeyType === 'object'
-      //     ? undefined
-      //     : [
-      //         { value: 'value1', label: 'Value 1' },
-      //         { value: 'value2', label: 'Value 2' },
-      //       ],
+      availableValues:
+        newKeyType === 'boolean'
+          ? undefined
+          : newKeyType === 'object'
+          ? undefined
+          : [
+              { value: 'value1', label: 'Value 1' },
+              { value: 'value2', label: 'Value 2' },
+            ],
     } as FinalValue;
 
     // Update Formik's state
@@ -102,7 +101,7 @@ const JSONBuilderFormik: React.FC<JSONBuilderFormikProps> = ({
     for (let i = 0; i < pathParts.length - 1; i++) {
       const part = pathParts[i];
       if (target[part].dataType === 'object') {
-        target = target[part].value as JsonObject;
+        target = target[part].value;
       }
     }
 
@@ -123,7 +122,7 @@ const JSONBuilderFormik: React.FC<JSONBuilderFormikProps> = ({
     for (let i = 0; i < pathParts.length - 1; i++) {
       const part = pathParts[i];
       if (target[part].dataType === 'object') {
-        target = target[part].value as JsonObject;
+        target = target[part].value;
       }
     }
 
