@@ -203,8 +203,8 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
     return (
       <>
         <IconButton
-          // onClick={() => setDatePickerOpen((prev) => !prev)}
-          onClick={() => clearEditor()}
+          onClick={() => setDatePickerOpen((prev) => !prev)}
+          // onClick={() => clearEditor()}
           sx={{
             position: 'absolute',
             right: 10,

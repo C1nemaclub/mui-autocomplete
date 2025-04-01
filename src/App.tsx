@@ -12,6 +12,7 @@ import CustomStepper from './components/Steps/CustomStepper';
 import SubList from './components/SubList/SubList';
 import { FormContextProvider } from './context/FormContext';
 import CustomComponent from './pages/CustomComponent';
+import EditableGrid from './pages/EditableGrid';
 
 function App() {
   const testForm = useFormik({
@@ -114,6 +115,7 @@ function App() {
           }
         />
         <Route path='/custom-component' element={<CustomComponent />} />
+        <Route path='/edit-grid' element={<EditableGrid />} />
       </Routes>
     </Router>
   );

@@ -34,6 +34,10 @@ const routes = [
     label: 'Custom Component',
     value: '/custom-component',
   },
+  {
+    label: 'Edit Grid',
+    value: '/edit-grid',
+  },
 ];
 
 const Navbar = () => {
