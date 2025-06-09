@@ -12,13 +12,19 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
+import cron from 'cron-validate';
+import { isValidCron } from 'cron-validator';
 import { FormikProps } from 'formik';
 import React, { FC, useRef, useState } from 'react';
 import type ReactQuill from 'react-quill';
+import { v4 as randomId } from 'uuid';
 import { FormikEntity, Project } from '../utils/data.model';
+import GenericListField from './GenericListField/GenericListField';
 import RadioGroupInput from './RadioGroupInput';
 import SelectGroupInputs from './SelectGroupInput';
 import TipTapEditor from './TipTapEditor';
+
 type UserForm = {
   form: FormikProps<FormikEntity>;
   initialValues?: FormikEntity;
@@ -98,8 +104,114 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
     default: <></>,
   };
 
+  const getValueValid = (val: string) => {
+    const cronResult = cron(val, {
+      override: {
+        minutes: {
+          lowerLimit: 5,
+        },
+      },
+    });
+    if (cronResult.isValid()) {
+      const validValue = cronResult.getValue();
+
+      // The valid value is a object containing all cron fields
+      console.log(validValue);
+      // In this case, it would be:
+      // { seconds: undefined, minutes: '*', hours: '*', daysOfMonth: '*', months: '*', daysOfWeek: '*', years: undefiend }
+    } else {
+      const errorValue = cronResult.getError();
+
+      // The error value contains an array of strings, which represent the cron validation errors.
+      console.log(errorValue); // string[] of error messages
+    }
+  };
+
+  const isBefore4 = (val: string) => {
+    const reg = /^(\*?\/?[0-4])(?:\s|,)/gm;
+    return reg.test(val);
+  };
+
+  const [users, setUsers] = useState<string[]>([]);
+  const [books, setBooks] = useState<{ name: string; id: string }[]>([]);
+  const [dates, setDates] = useState<(Date | null)[]>([]);
+  const [roles, setRoles] = useState<Array<string[]>>([]);
+
   return (
     <>
+      <Grid item xs={12}>
+        <GenericListField
+          value={roles}
+          onChange={(updatedRoles) => setRoles(updatedRoles)}
+          label='Roles'
+          newEntryDefault={[]}
+          renderField={({ value, onChange }) => (
+            <Autocomplete
+              multiple
+              fullWidth
+              size='small'
+              options={['User', 'Admin', 'SuperAdmin']}
+              value={value}
+              renderInput={(params) => <TextField {...params} />}
+              getOptionLabel={(option) => option}
+              onChange={(_, newValue) => onChange(newValue)}
+              isOptionEqualToValue={(option, value) => option === value}
+              disableCloseOnSelect
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <GenericListField
+          value={dates}
+          onChange={(updatedDates) => setDates(updatedDates)}
+          label='Dates'
+          newEntryDefault={null}
+          renderField={({ value, onChange }) => (
+            <DatePicker
+              value={value}
+              onChange={(value) => onChange(value)}
+              renderInput={(params) => <TextField {...params} fullWidth />}
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <GenericListField
+          value={users}
+          onChange={(updatedUsers) => setUsers(updatedUsers)}
+          label='Users'
+          newEntryDefault=''
+          renderField={({ value, onChange }) => (
+            <TextField
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              fullWidth
+              size='small'
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <GenericListField
+          value={books}
+          onChange={(updatedUsers) => setBooks(updatedUsers)}
+          label='Books'
+          newEntryDefault={{
+            id: randomId(),
+            name: '',
+          }}
+          renderField={({ value, onChange }) => (
+            <TextField
+              value={value.name}
+              onChange={(e) => onChange({ ...value, name: e.target.value })}
+              fullWidth
+              size='small'
+            />
+          )}
+        />
+      </Grid>
+
       <Grid item xs={6}>
         <TextField
           name='name'
@@ -109,7 +221,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           fullWidth
         />
       </Grid>
-      <pre>{JSON.stringify({ x: form.values.name }, null, 2)}</pre>
+      {/* <pre>{JSON.stringify({ validValue }, null, 2)}</pre> */}
       <Grid item xs={6}>
         <TextField
           name='description'
@@ -443,6 +555,14 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           </Button>
         </Grid>
       </Grid>
+
+      <pre>
+        {JSON.stringify(
+          { isValidCron: isValidCron(form.values.name) },
+          null,
+          2
+        )}
+      </pre>
 
       <Grid item xs={12}>
         <Button

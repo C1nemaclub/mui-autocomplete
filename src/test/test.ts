@@ -1,37 +1,24 @@
-import dot from 'dot-object';
+import { parseISO } from 'date-fns';
+import { format, utcToZonedTime } from 'date-fns-tz';
 
-const data = {
-  project_id: 'someid',
-  data: {
-    project: {
-      project_id: 'anotherid',
-    },
-    user: {
-      name: 'myname',
-    },
-  },
+const functName = (date: string) => {
+  const timeZone = 'America/New_York'; // Handles both EST and EDT automatically
+
+  const utcDate = parseISO(date);
+  const estDate = utcToZonedTime(utcDate, timeZone);
+
+  const formatted = format(estDate, 'MM-dd-yyyy hh:mm a');
+  return formatted;
 };
 
-const findKeyValue = (obj: any, keyToFind: string) => {
-  let keyValue: string | null = '';
-  const dotted = dot.dot(obj);
+const someDate = '03-11-2025';
+const formatted = format(new Date(someDate), 'yyyy-MM-dd');
+console.log(functName(formatted.toString()));
 
-  for (const [keyPath, value] of Object.entries(dotted)) {
-    console.log('fiding', keyPath);
-    if (keyPath.endsWith(keyToFind)) {
-      keyValue = value as string;
-      break;
-    }
-  }
+// console.log(functName(someDate)); // 03-11-2025 12:00 AM
+// const parsedDate = parseISO(new Date(someDate).toString());
+// const d = functName(parsedDate.toString());
+// console.log(d);
 
-  // Object.entries(dotted).forEach(([keyPath, value], index) => {
-  //   console.log('fiding', keyPath);
-  //   if (keyPath.endsWith(keyToFind) && !keyValue) {
-  //     keyValue = value as string;
-  //   }
-  // });
 
-  return keyValue;
-};
-
-console.log(findKeyValue(data, 'project_id'));
+export interface User {}
