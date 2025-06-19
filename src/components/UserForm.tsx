@@ -20,6 +20,7 @@ import React, { FC, useRef, useState } from 'react';
 import type ReactQuill from 'react-quill';
 import { v4 as randomId } from 'uuid';
 import { FormikEntity, Project } from '../utils/data.model';
+import FloatField from './FloatField/FloatField';
 import GenericListField from './GenericListField/GenericListField';
 import RadioGroupInput from './RadioGroupInput';
 import SelectGroupInputs from './SelectGroupInput';
@@ -136,9 +137,30 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
   const [books, setBooks] = useState<{ name: string; id: string }[]>([]);
   const [dates, setDates] = useState<(Date | null)[]>([]);
   const [roles, setRoles] = useState<Array<string[]>>([]);
+  const [testVal, setTestVal] = useState<number | null>(null);
+  const [nums, setNums] = useState<Array<number | null>>([]);
+  console.log(nums);
 
   return (
     <>
+      <pre>{JSON.stringify({ nums }, null, 2)}</pre>
+      <Grid item xs={12}>
+        <GenericListField
+          value={nums}
+          onChange={(updatedNums) => setNums(updatedNums)}
+          label='Numbers'
+          newEntryDefault={null}
+          renderField={({ value, onChange }) => (
+            <FloatField
+              value={value}
+              onChange={(val) => onChange(val)}
+              fullWidth
+              size='small'
+            />
+          )}
+        />
+      </Grid>
+
       <Grid item xs={12}>
         <GenericListField
           value={roles}
