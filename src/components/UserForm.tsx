@@ -164,7 +164,7 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
       <Grid item xs={12}>
         <GenericListField
           value={roles}
-          onChange={(updatedRoles) => setRoles(updatedRoles)}
+          onChange={setRoles}
           label='Roles'
           newEntryDefault={[]}
           renderField={({ value, onChange }) => (
@@ -481,7 +481,12 @@ const UserForm: FC<UserForm> = ({ form, data, isEdit }) => {
           ref={quillRef}
         />
       </Grid> */}
-      <Grid item xs={12}>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          border: '1px solid red',
+        }}>
         <TipTapEditor
           value={form.values.description}
           onChange={(value) => form.setFieldValue('description', value)}

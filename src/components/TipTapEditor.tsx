@@ -170,11 +170,21 @@ const TipTapEditor: FC<TipTapEditorProps> = ({
           },
         },
       });
+
+      const inputValue = textContent;
+      const floatRegex = /^-?\d*\.?\d*$/; // Regex to allow only valid float numbers
+      if (inputValue === '' || floatRegex.test(inputValue)) {
+        // Convert to float or null if empty
+        const newValue = inputValue === '' ? null : parseFloat(inputValue);
+        onChange(String(newValue));
+      }
+
       // onChange(editor.getHTML());
-      const numbersRegex = /^\d*$/;
-      if (numbersRegex.test(textContent)) {
-        onChange(textContent);
-      } else {
+      // const numbersRegex = /^\d*$/;
+      // if (numbersRegex.test(textContent)) {
+      //   onChange(textContent);
+      // }
+      else {
         editor.commands.setContent(transformTextToHTML(value));
       }
     },
