@@ -48,6 +48,8 @@ function App() {
   //   }
   // }
 
+  console.log('test Commit');
+
   return (
     // <>
     //   <SlateEditot />
