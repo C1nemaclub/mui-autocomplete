@@ -50,6 +50,7 @@ function App() {
 
   console.log('test Commit');
   console.log('heeey');
+  console.log('test 3');
 
   return (
     // <>
