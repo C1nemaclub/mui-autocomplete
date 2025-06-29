@@ -61,6 +61,8 @@ function App() {
 
   const more = () => {};
 
+  const rebaseTest = () => {};
+
   return (
     // <>
     //   <SlateEditot />
