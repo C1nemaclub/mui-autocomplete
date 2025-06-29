@@ -53,6 +53,7 @@ function App() {
   console.log('test 3');
 
   const testFn = () => {};
+  const helloFn = () => {};
 
   return (
     // <>
