@@ -52,6 +52,8 @@ function App() {
   console.log('heeey');
   console.log('test 3');
 
+  const testFn = () => {};
+
   return (
     // <>
     //   <SlateEditot />
