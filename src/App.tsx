@@ -59,6 +59,8 @@ function App() {
 
   const commitTest = () => {};
 
+  const more = () => {};
+
   return (
     // <>
     //   <SlateEditot />
