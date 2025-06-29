@@ -55,6 +55,8 @@ function App() {
   const testFn = () => {};
   const helloFn = () => {};
 
+  const HEY! = () => {};
+
   return (
     // <>
     //   <SlateEditot />
