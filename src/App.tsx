@@ -57,6 +57,8 @@ function App() {
 
   const HEY! = () => {};
 
+  const commitTest = () => {};
+
   return (
     // <>
     //   <SlateEditot />
