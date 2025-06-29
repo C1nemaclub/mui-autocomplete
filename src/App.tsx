@@ -63,6 +63,8 @@ function App() {
 
   const rebaseTest = () => {};
 
+  const LOG! = () => {};
+
   return (
     // <>
     //   <SlateEditot />
