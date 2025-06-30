@@ -39,15 +39,6 @@ function App() {
     </FormContextProvider>
   );
 
-  // console.log(dot(userMocked));
-  // for (const key in dot(userMocked)) {
-  //   console.log('loopng', key);
-  //   if (key.endsWith('project_id')) {
-  //     console.log(key, 'then');
-  //     break;
-  //   }
-  // }
-
   return (
     // <>
     //   <SlateEditot />
