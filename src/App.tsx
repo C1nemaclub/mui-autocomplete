@@ -40,29 +40,12 @@ function App() {
   );
 
   return (
-    // <>
-    //   <SlateEditot />
-    //   <QuillEditor />
-    // </>
     <Router>
       <Navbar />
-      {/* <pre>{JSON.stringify({ v: testForm.values }, null, 2)}</pre> */}
       <Routes>
         <Route path='/:queueId' element={FormElement} />
         <Route path='/' element={FormElement} />
-        <Route
-          path='/editor'
-          element={
-            <>
-              {/* <QuillMention /> */}
-              {/* <QuillEditor /> */}
-              {/* <SlateEditor /> */}
-              {/* <BasicMentions /> */}
-              {/* <TipTapEditor /> */}
-              Hey!
-            </>
-          }
-        />
+        <Route path='/editor' element={<>Hey!</>} />
         <Route
           path='/list'
           element={
@@ -101,7 +84,6 @@ function App() {
           element={
             <>
               <JSONBuilderFormik form={testForm} name='data' />
-              {/* <JSONBuilderFormikWithArrays form={testForm} name='data' /> */}
             </>
           }
         />
