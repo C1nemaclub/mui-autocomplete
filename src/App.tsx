@@ -48,28 +48,6 @@ function App() {
   //   }
   // }
 
-  console.log('test Commit');
-  console.log('heeey');
-  console.log('test 3');
-
-  const testFn = () => {};
-  const helloFn = () => {};
-
-  const HEY! = () => {};
-
-  const commitTest = () => {};
-
-  const more = () => {};
-
-  const rebaseTest = () => {};
-
-  const LOG! = () => {};
-
-  console.log('cmmit 1');
-  console.log('cmmit 2');
-  console.log('Commit 3');
-  console.log('Commit 4');
-
   return (
     // <>
     //   <SlateEditot />
