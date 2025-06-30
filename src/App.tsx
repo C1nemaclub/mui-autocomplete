@@ -66,6 +66,7 @@ function App() {
   const LOG! = () => {};
 
   console.log('cmmit 1');
+  console.log('cmmit 2');
 
   return (
     // <>
