@@ -65,6 +65,8 @@ function App() {
 
   const LOG! = () => {};
 
+  console.log('cmmit 1');
+
   return (
     // <>
     //   <SlateEditot />
