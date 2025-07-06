@@ -11,6 +11,7 @@ import Navbar from './components/Navbar';
 import CustomStepper from './components/Steps/CustomStepper';
 import SubList from './components/SubList/SubList';
 import { FormContextProvider } from './context/FormContext';
+import Components from './pages/Components';
 import CustomComponent from './pages/CustomComponent';
 import EditableGrid from './pages/EditableGrid';
 
@@ -89,6 +90,7 @@ function App() {
         />
         <Route path='/custom-component' element={<CustomComponent />} />
         <Route path='/edit-grid' element={<EditableGrid />} />
+        <Route path='/components' element={<Components />} />
       </Routes>
     </Router>
   );

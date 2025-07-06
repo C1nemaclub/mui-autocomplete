@@ -38,6 +38,10 @@ const routes = [
     label: 'Edit Grid',
     value: '/edit-grid',
   },
+  {
+    label: 'Components',
+    value: '/components',
+  },
 ];
 
 const Navbar = () => {
