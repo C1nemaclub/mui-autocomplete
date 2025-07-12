@@ -2,7 +2,7 @@ import {
   Button,
   Stack,
   type ButtonProps,
-  type StackProps,
+  type Grid2Props
 } from '@mui/material';
 import { createContext, useContext, type FC, type ReactNode } from 'react';
 
@@ -88,7 +88,7 @@ interface RenderItemProps<T> {
   onRemove: () => void;
 }
 
-interface ItemsProps extends StackProps {}
+interface ItemsProps extends Grid2Props {}
 
 const Items = ({ ...rest }: ItemsProps) => {
   const { value, updateAt, renderItem, removeItemByIndex } =

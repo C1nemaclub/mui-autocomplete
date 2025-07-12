@@ -1,19 +1,6 @@
-import {
-  Autocomplete,
-  Chip,
-  Container,
-  IconButton,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { IconTrash } from '@tabler/icons-react';
+import { Container } from '@mui/material';
 import { useState } from 'react';
-import CompoundList from '../components/CompoundGenericList/context/CompundList';
-import CompoundWithGithub from '../components/CompoundWithGithub';
-import Expression from '../components/Expression';
-import GithubAutocomplete from '../components/GithubAutocomplete/GithubAutocomplete';
-import StyledInput from '../components/GithubAutocomplete/components/StyledInput';
+import FieldsJson from '../components/FieldsJson/FieldsJson';
 
 const allTags = ['react', 'vue', 'angular', 'node', 'express', 'docker', 'k8s'];
 
@@ -28,7 +15,8 @@ const Components = () => {
 
   return (
     <Container>
-      <Typography variant='h4'>Components</Typography>
+      <FieldsJson />
+      {/* <Typography variant='h4'>Components</Typography>
       <Expression />
       <CompoundWithGithub />
       <Stack
@@ -140,7 +128,7 @@ const Components = () => {
             </CompoundList.ClearButton>
           </Stack>
         </CompoundList>
-      </Stack>
+      </Stack> */}
     </Container>
   );
 };

@@ -1,17 +1,38 @@
-import { IconButton, Stack, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import CompoundList from './CompoundGenericList/context/CompundList';
 
+const operators: Operator[] = [
+  { value: 'contains', label: 'Contains' },
+  { value: 'equal', label: 'Equal' },
+  { value: 'empty', label: 'Empty' },
+];
+
 interface Exp {
   firstVal: string;
-  operator: string;
+  operator: Operator;
   secondVal: string;
+}
+
+interface Operator {
+  value: string;
+  label: string;
 }
 
 const Expression = () => {
   const [value, setValue] = useState<Exp[]>([
-    { firstVal: 'Val', operator: 'Contains', secondVal: 'Valen' },
+    {
+      firstVal: 'Val',
+      operator: { value: operators[0].value, label: operators[0].label },
+      secondVal: 'Valen',
+    },
   ]);
 
   return (
@@ -27,7 +48,7 @@ const Expression = () => {
           onChange={setValue}
           defaultVal={{
             firstVal: '',
-            operator: '',
+            operator: operators[0],
             secondVal: '',
           }}
           renderItem={(params) => {
@@ -64,19 +85,26 @@ const Expression = () => {
                     }
                     label='First Value'
                   />
-                  <TextField
+                  <Autocomplete
                     fullWidth
                     size='small'
+                    options={operators}
                     value={params.value.operator}
-                    onChange={(e) =>
+                    disableClearable
+                    onChange={(_, v) => {
+                      const secondVal =
+                        v.value === 'empty' ? '' : params.value.secondVal;
                       params.onChange({
                         ...params.value,
-                        operator: e.target.value,
-                      })
-                    }
-                    label='Operator'
+                        operator: v,
+                        secondVal,
+                      });
+                    }}
+                    renderInput={(params) => {
+                      return <TextField {...params} label='Operator' />;
+                    }}
                   />
-                  {params.value.operator !== 'Empty' && (
+                  {params.value.operator.value !== 'empty' && (
                     <TextField
                       fullWidth
                       size='small'
@@ -118,6 +146,7 @@ const Expression = () => {
           </Stack>
         </CompoundList>
       </Stack>
+      <pre>{JSON.stringify({ value }, null, 2)}</pre>
     </Stack>
   );
 };
