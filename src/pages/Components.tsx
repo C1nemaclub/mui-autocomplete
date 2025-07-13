@@ -1,6 +1,6 @@
 import { Container } from '@mui/material';
 import { useState } from 'react';
-import FieldsJson from '../components/FieldsJson/FieldsJson';
+import ZodRFH from '../components/ZodRFH/ZodRFH';
 
 const allTags = ['react', 'vue', 'angular', 'node', 'express', 'docker', 'k8s'];
 
@@ -15,7 +15,8 @@ const Components = () => {
 
   return (
     <Container>
-      <FieldsJson />
+      {/* <FieldsJson /> */}
+      <ZodRFH />
       {/* <Typography variant='h4'>Components</Typography>
       <Expression />
       <CompoundWithGithub />
