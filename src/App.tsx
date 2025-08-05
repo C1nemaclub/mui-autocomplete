@@ -14,6 +14,7 @@ import { FormContextProvider } from './context/FormContext';
 import Components from './pages/Components';
 import CustomComponent from './pages/CustomComponent';
 import EditableGrid from './pages/EditableGrid';
+import Suffer from './pages/Suffer';
 
 function App() {
   const testForm = useFormik({
@@ -91,6 +92,7 @@ function App() {
         <Route path='/custom-component' element={<CustomComponent />} />
         <Route path='/edit-grid' element={<EditableGrid />} />
         <Route path='/components' element={<Components />} />
+        <Route path='/this' element={<Suffer />} />
       </Routes>
     </Router>
   );

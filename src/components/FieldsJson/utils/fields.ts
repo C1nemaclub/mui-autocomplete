@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import * as z from 'zod';
 
 export interface CommonProps {
   label: string;
@@ -128,19 +128,19 @@ export const template: ActionTemplate = {
   community: {
     type: 'json',
     label: 'Community',
-    required: false,
+    required: true,
     schema: {
       members: {
         type: 'string.list',
         label: 'Members',
-        required: false,
+        required: true,
       },
     },
   },
   phone: {
     type: 'text',
     label: 'Phone number',
-    required: false,
+    required: true,
   },
   team: {
     type: 'select',
@@ -165,12 +165,12 @@ export const template: ActionTemplate = {
       additionalInformation: {
         type: 'json',
         label: 'Additional information',
-        required: false,
+        required: true,
         schema: {
           observations: {
             type: 'text',
             label: 'Observations',
-            required: false,
+            required: true,
           },
         },
       },
@@ -178,66 +178,126 @@ export const template: ActionTemplate = {
   },
 };
 
-const getFieldTypeSchema = (props: FieldProps): yup.AnySchema => {
-  const { type, required } = props;
-  switch (type) {
-    case 'text': {
-      if (required) {
-        return yup.object({
-          value: yup.string().required(),
+export const templateToZchema = <T extends ActionTemplate>(template: T) => {
+  const getFieldTypeZchema = (props: FieldProps): z.ZodType<any> => {
+    switch (props.type) {
+      case 'text':
+        return z.looseObject({
+          type: z.literal('text'),
+          value: z.string().trim().min(1, '1️⃣ Min'),
+        });
+      case 'string.list':
+        return z.looseObject({
+          type: z.literal('string.list'),
+          value: z.array(z.string().trim().min(1, '1️⃣ Min')),
+        });
+      case 'select':
+        return z.looseObject({
+          type: z.literal('select'),
+          value: z.strictObject({
+            value: z.string().trim().min(1, '1️⃣ Min'),
+            label: z.string(),
+          }),
+        });
+      case 'json': {
+        const nestedFields = props.schema ?? {};
+        return z.looseObject({
+          type: z.literal('json'),
+          value: templateToZchema(nestedFields),
         });
       }
-      return yup.object({
-        value: yup.string(),
-      });
+      default:
+        return z.any();
     }
-    case 'select': {
-      if (required) {
-        return yup.object().shape({
-          value: yup
-            .object()
-            .shape({
-              value: yup.string().required(),
-              label: yup.string().required(),
-            })
-            .required(),
-        });
-      }
-      return yup.object().shape({
-        value: yup.object().shape({
-          value: yup.string(),
-          label: yup.string(),
-        }),
-      });
-    }
-    case 'json': {
-      // Recursively obtain the schema for nested json fields
-      const nestedFields = props.schema ?? {};
-      const nestedSchemaShape = Object.entries(nestedFields).reduce(
-        (acc, [key, fieldProps]) => {
-          acc[key] = getFieldTypeSchema(fieldProps); // recursively apply schema
-          return acc;
-        },
-        {} as Record<string, yup.AnySchema>
-      );
-      const base = yup.object({
-        value: yup.object().shape(nestedSchemaShape),
-        type: yup.string(),
-      });
-      return required ? base.required() : base;
-    }
-    default:
-      return yup.mixed();
+  };
+  const shape: Record<string, z.ZodType<any>> = {};
+  for (const key in template) {
+    shape[key] = getFieldTypeZchema(template[key]);
   }
+  return z.object(shape);
 };
 
-export const templateToSchema = (
-  template: ActionTemplate
-): yup.ObjectSchema<ActionTemplate> => {
-  const fieldSchema = Object.entries(template).reduce((acc, item) => {
-    const [fieldName, fieldProps] = item;
-    acc[fieldName] = getFieldTypeSchema(fieldProps);
-    return acc;
-  }, {} as Record<string, yup.AnySchema>);
-  return yup.object().shape(fieldSchema);
+type FnReturn = ReturnType<typeof templateToZchema>;
+
+export type InferredAction = z.infer<FnReturn>;
+
+const submitex = {
+  name: {
+    type: 'text',
+    value: 'Sam',
+    label: 'Name',
+    required: true,
+  },
+  community: {
+    type: 'json',
+    value: {
+      members: {
+        type: 'string.list',
+        value: ['Velasquez'],
+        label: 'Members',
+        required: true,
+      },
+    },
+    label: 'Community',
+    required: true,
+  },
+  phone: {
+    type: 'text',
+    value: '03122536731',
+    label: 'Phone number',
+    required: true,
+  },
+  team: {
+    type: 'select',
+    value: {
+      value: 'hey',
+      label: 'Hey',
+    },
+    label: 'Engineering team',
+    required: true,
+  },
+  meta: {
+    type: 'json',
+    value: {
+      address: {
+        type: 'text',
+        value: 'Street',
+        label: 'Address',
+        required: true,
+      },
+      city: {
+        type: 'select',
+        value: {
+          value: 'DADA',
+          label: 'Hey',
+        },
+        label: 'City',
+        required: true,
+      },
+      additionalInformation: {
+        type: 'json',
+        value: {
+          observations: {
+            type: 'text',
+            value: 'What should I put here',
+            label: 'Observations',
+            required: true,
+          },
+        },
+        label: 'Additional information',
+        required: true,
+      },
+    },
+    label: 'Information',
+    required: true,
+  },
 };
+
+const schema = templateToZchema(template);
+
+try {
+  schema.parse(submitex);
+  console.log('success');
+} catch (e) {
+  console.log(e.message, '❌❌❌');
+}

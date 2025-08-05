@@ -2,7 +2,7 @@ import {
   Button,
   Stack,
   type ButtonProps,
-  type Grid2Props
+  type Grid2Props,
 } from '@mui/material';
 import { createContext, useContext, type FC, type ReactNode } from 'react';
 
@@ -15,9 +15,7 @@ interface CompoundContextProps<T> {
   removeItemByIndex: (index: number) => void;
 }
 
-const CompoundListContext = createContext<
-  CompoundContextProps<any> | undefined
->(undefined);
+const CompoundListContext = createContext({} as CompoundContextProps<any>);
 
 interface CompoundListProps<T> {
   value: Array<T>;
@@ -92,7 +90,7 @@ interface ItemsProps extends Grid2Props {}
 
 const Items = ({ ...rest }: ItemsProps) => {
   const { value, updateAt, renderItem, removeItemByIndex } =
-    useCompoundListContext<any>();
+    useCompoundListContext();
   return (
     <Stack {...rest}>
       {value.map((item, i) =>

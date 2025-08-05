@@ -42,6 +42,10 @@ const routes = [
     label: 'Components',
     value: '/components',
   },
+  {
+    label: 'this',
+    value: '/this',
+  },
 ];
 
 const Navbar = () => {

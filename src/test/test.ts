@@ -1,24 +1,54 @@
-import { parseISO } from 'date-fns';
-import { format, utcToZonedTime } from 'date-fns-tz';
-
-const functName = (date: string) => {
-  const timeZone = 'America/New_York'; // Handles both EST and EDT automatically
-
-  const utcDate = parseISO(date);
-  const estDate = utcToZonedTime(utcDate, timeZone);
-
-  const formatted = format(estDate, 'MM-dd-yyyy hh:mm a');
-  return formatted;
+const values = {
+  email: { value: '', dataType: 'string' },
+  data: {
+    dataType: 'json',
+    value: {
+      name: {
+        dataType: 'string',
+        value: '',
+      },
+    },
+  },
 };
 
-const someDate = '03-11-2025';
-const formatted = format(new Date(someDate), 'yyyy-MM-dd');
-console.log(functName(formatted.toString()));
+const selectableValues = [
+  {
+    value: 'data',
+    selected: false,
+    dataType: 'json',
+    available_values: [{ value: 'name', selected: true, dataType: 'string' }],
+  },
+  {
+    value: 'email',
+    selected: true,
+    dataType: 'string',
+  },
+];
 
-// console.log(functName(someDate)); // 03-11-2025 12:00 AM
-// const parsedDate = parseISO(new Date(someDate).toString());
-// const d = functName(parsedDate.toString());
-// console.log(d);
+// const pathExistsInValues = (values: any, path: string): boolean => {
+//   return (
+//     path.split('.').reduce((acc, key) => {
+//       if (acc && typeof acc === 'object' && key in acc) {
+//         return acc[key].value ?? acc[key]; // handles nested structures like values.data.value.name
+//       }
+//       return undefined;
+//     }, values) !== undefined
+//   );
+// };
 
+// const handleExistance = (selectable: typeof selectableValues, path = '') => {
+//   selectable.forEach((item) => {
+//     const fullPath = path ? `${path}.${item.value}` : item.value;
 
-export interface User {}
+//     if (item.available_values) {
+//       handleExistance(item.available_values, fullPath);
+//     }
+
+//     if (!item.available_values) {
+//       const exists = pathExistsInValues(values, fullPath);
+//       console.log(`${fullPath} => ${exists ? 'EXISTS' : 'NOT FOUND'}`);
+//     }
+//   });
+// };
+
+// handleExistance(selectableValues);
