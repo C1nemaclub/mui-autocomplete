@@ -6,8 +6,10 @@ import {
   FormControlLabel,
   Stack,
   TextField,
+  Typography,
 } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2';
+import type { FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import FloatField from '../FloatField/FloatField';
 import {
@@ -26,7 +28,11 @@ const cities = [
 
 const countries = ['Colombia', 'Spain'];
 
-const ZodRFH = () => {
+interface ZodRFHForm {
+  onSubmitHandler?: (values: Form) => void;
+}
+
+const ZodRFH: FC<ZodRFHForm> = ({ onSubmitHandler }) => {
   const {
     register,
     handleSubmit,
@@ -41,6 +47,7 @@ const ZodRFH = () => {
   });
   const onSubmit = (values: Form) => {
     console.log(values, '⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️');
+    onSubmitHandler?.(values);
   };
 
   const [country, allowContact] = watch(['country', 'allowContact']);
@@ -48,6 +55,7 @@ const ZodRFH = () => {
 
   return (
     <Stack component='form' onSubmit={handleSubmit(onSubmit)} gap={1} mt={2}>
+      <Typography variant='h1'>Zod Form</Typography>
       <TextField
         {...register('name')}
         size='small'
@@ -82,6 +90,7 @@ const ZodRFH = () => {
               const { value, name, onChange, ref } = field;
               return (
                 <Autocomplete
+                  data-testid='country-autocomplete'
                   value={value}
                   onChange={(_, v) => {
                     onChange(v);
@@ -185,7 +194,11 @@ const ZodRFH = () => {
           />
         </Grid2>
       </Grid2>
-      <Button type='submit' variant='contained' disabled={!isValid}>
+      <Button
+        type='submit'
+        variant='contained'
+        disabled={!isValid}
+        data-testid='submit'>
         Save
       </Button>
     </Stack>

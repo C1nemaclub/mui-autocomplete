@@ -54,16 +54,13 @@ const FieldsJson = () => {
     switch (deepFieldProps.type) {
       case 'text':
         return (
-          <>
-            <TextField
-              {...register(`${fieldName}.value`)}
-              fullWidth
-              size='small'
-              label={label}
-              {...getFieldError(errors, `${fieldName}.value`)}
-            />
-            {String(deepFieldProps.type)}
-          </>
+          <TextField
+            {...register(`${fieldName}.value`)}
+            fullWidth
+            size='small'
+            label={label}
+            {...getFieldError(errors, `${fieldName}.value`)}
+          />
         );
       case 'string.list': {
         return (
